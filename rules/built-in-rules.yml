@@ -321,13 +321,21 @@ rules:
           confidence: 0.8
           description: "Hardcoded authentication token"
 
-        - pattern: 'Authorization:\s*Bearer\s+[A-Za-z0-9\-._~+/]+=*'
+        - pattern: { confidence: 0.9, description: "Hardcoded Bearer token" } ][ A-Z0-9]{20}["\']'
           confidence: 0.9
-          description: "Hardcoded Bearer token"
-
-        - pattern: 'AKIA[0-9A-Z]{16}'
-          confidence: 0.95
           description: "AWS Access Key ID"
+
+        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\'][A-Za-z0-9/+=]{40}["\']'
+          confidence: 0.85
+          description: "AWS Secret Access Key (40 characters)"
+
+        - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\'][A-Za-z0-9/+=]{100,}["\']'
+          confidence: 0.85
+          description: "AWS Session Token"
+
+        - pattern: {confidence: 0.9 description: "AWS Access Key in URL parameter" } (AWSAccessKeyId)=[A-Z0-9]+
+          confidence: 0.95
+          description: "AWS Access Key in URL parameter"
 
     scope:
       file_patterns:
@@ -369,12 +377,8 @@ rules:
         - language: python
           insecure: |
             # INSECURE - Hardcoded credentials
-            API_KEY = "sk_live_abc123def456ghi789"
-            DATABASE_PASSWORD = "MySecretP@ssw0rd"
-
-            def connect_to_api():
-                headers = {"Authorization": f"Bearer {API_KEY}"}
-                return requests.get("https://api.example.com", headers=headers)
+            API_KEY = "sk_live_1234567890abcdef"
+            DATABASE_PASSWORD = "hardcoded_password_123"
 
           secure: |
             # SECURE - Environment variables
@@ -386,43 +390,24 @@ rules:
             if not API_KEY:
                 raise ValueError("API_KEY environment variable not set")
 
-            def connect_to_api():
-                headers = {"Authorization": f"Bearer {API_KEY}"}
-                return requests.get("https://api.example.com", headers=headers)
-
     references:
       - "https://cwe.mitre.org/data/definitions/798.html"
       - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
 
-  - rule_id: BUILTIN-AUTH-002
-    title: "Weak Password Hashing Algorithm"
-    description: "Use of weak or fast hashing algorithms (MD5, SHA1, SHA256) for password storage"
+  - rule_id: BUILTIN-CRYPTO-002
+    title: "Weak Cryptographic Hash - MD5/SHA1"
+    description: "Use of weak cryptographic hash functions (MD5, SHA1) for security purposes"
     severity: HIGH
     category: security
     cwe: CWE-326
     owasp: "A02:2021 - Cryptographic Failures"
 
-    compliance:
-      - framework: PCI_DSS
-        requirement: "8.2.3"
-        description: "Passwords must be rendered unreadable during transmission and storage using strong cryptography"
-
     detection:
       patterns:
-        - pattern: '(md5|hashlib\.md5)\([^)]*password'
+        - pattern: 'hashlib\.(md5|sha1)\('
           language: python
-          confidence: 0.9
-          description: "MD5 hashing of password"
-
-        - pattern: '(sha1|hashlib\.sha1)\([^)]*password'
-          language: python
-          confidence: 0.9
-          description: "SHA1 hashing of password"
-
-        - pattern: '(sha256|hashlib\.sha256)\([^)]*password'
-          language: python
-          confidence: 0.7
-          description: "SHA256 hashing of password (too fast)"
+          confidence: 0.8
+          description: "Python MD5/SHA1 usage"
 
         - pattern: 'MessageDigest\.getInstance\(["\']MD5["\']\)'
           language: java
