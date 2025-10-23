@@ -333,7 +333,7 @@ rules:
           confidence: 0.85
           description: "AWS Session Token"
 
-        - pattern: {confidence: 0.9 description: "AWS Access Key in URL parameter" } (AWSAccessKeyId)=[A-Z0-9]+
+        - pattern: '(AWSAccessKeyId)=[A-Z0-9]+'
           confidence: 0.95
           description: "AWS Access Key in URL parameter"
 
