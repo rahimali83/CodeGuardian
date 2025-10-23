@@ -1,0 +1,63 @@
+{
+  "agent_id": "security-review",
+  "name": "Security Code Review Agent",
+  "version": "1.0.0",
+  "description": "AI-powered security code review agent that performs comprehensive automated security analysis of codebases, identifying vulnerabilities, compliance violations, and code quality issues while tracking remediation progress over time.",
+  "author": "Claude Code Security Team",
+  "category": "security",
+  "tags": [
+    "security",
+    "code-review",
+    "vulnerability-scanning",
+    "compliance",
+    "owasp",
+    "pci-dss",
+    "soc2",
+    "pipeda",
+    "ccpa",
+    "hipaa",
+    "nist",
+    "api-security",
+    "static-analysis"
+  ],
+  "capabilities": [
+    "Security vulnerability detection (OWASP Top 10, CWE)",
+    "Compliance checking (PCI DSS, SOC 2, PIPEDA, CCPA, HIPAA, NIST)",
+    "API security analysis",
+    "Secrets and credentials detection",
+    "Vulnerability remediation tracking",
+    "Custom security rules support",
+    "Standardized markdown reporting",
+    "CI/CD pipeline integration"
+  ],
+  "supported_languages": [
+    "Python",
+    "JavaScript",
+    "TypeScript",
+    "Java",
+    "Go",
+    "C",
+    "C++",
+    "C#",
+    "Ruby",
+    "PHP",
+    "Kotlin",
+    "Swift",
+    "Rust"
+  ],
+  "configuration_file": ".code-review-config.yml",
+  "output_directory": "security-reports",
+  "documentation": {
+    "readme": "README.md",
+    "agent_definition": "agent/agent-definition.md",
+    "core_prompt": "agent/core-prompt.md",
+    "custom_rules_guide": "docs/custom-rules-guide.md",
+    "compliance_guide": "docs/compliance-frameworks.md",
+    "integration_guide": "docs/integration-guide.md",
+    "troubleshooting": "docs/troubleshooting.md"
+  },
+  "requirements": {
+    "claude_code": ">=1.0.0"
+  },
+  "license": "MIT"
+}

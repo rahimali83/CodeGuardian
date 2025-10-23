@@ -1,0 +1,465 @@
+# Custom Rule Example: API Rate Limiting
+# This rule checks for missing rate limiting on API endpoints
+
+rule_id: CUSTOM-API-001
+title: "Missing API Rate Limiting"
+description: |
+  Detects API endpoints that lack rate limiting protection. Rate limiting is essential
+  to prevent abuse, brute force attacks, denial of service, and API scraping. All public
+  API endpoints should implement appropriate rate limiting, with stricter limits on
+  authentication and sensitive endpoints.
+
+severity: MEDIUM
+category: api_security
+cwe: CWE-770
+owasp: "A04:2021 - Insecure Design"
+
+compliance:
+  - framework: PCI_DSS
+    requirement: "8.2.4"
+    description: "Lock out the user ID after not more than six invalid access attempts"
+
+  - framework: PCI_DSS
+    requirement: "11.4"
+    description: "Use intrusion-detection and/or intrusion-prevention techniques to detect and/or prevent intrusions into the network"
+
+  - framework: SOC2
+    requirement: "CC6.1"
+    description: "The entity implements logical access security software to protect against threats from sources outside its system boundaries"
+
+  - framework: OWASP_API_SECURITY
+    requirement: "API4:2023"
+    description: "Unrestricted Resource Consumption"
+
+detection:
+  # Python Flask routes without rate limiting
+  patterns:
+    - pattern: '@app\.route\(["\']/(api|v\d+)/'
+      description: "Flask API route definition"
+      confidence: 0.5
+      language: python
+
+    - pattern: '@router\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+      description: "FastAPI route definition"
+      confidence: 0.5
+      language: python
+
+    # Express.js routes without rate limiting
+    - pattern: 'app\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+      description: "Express.js API route definition"
+      confidence: 0.5
+      language: javascript
+
+    - pattern: 'router\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+      description: "Express.js router definition"
+      confidence: 0.5
+      language: javascript
+
+    # Spring Boot without rate limiting
+    - pattern: '@(GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping|RequestMapping)\(["\']/(api|v\d+)/'
+      description: "Spring Boot API endpoint"
+      confidence: 0.5
+      language: java
+
+    # Authentication endpoints (higher priority)
+    - pattern: '/(login|signin|auth|authenticate|token|oauth)'
+      description: "Authentication endpoint (requires strict rate limiting)"
+      confidence: 0.8
+
+  # Check for absence of rate limiting decorators/middleware
+  ast_patterns:
+    - type: route_definition
+      missing_decorator:
+        - "limiter.limit"
+        - "rate_limit"
+        - "throttle"
+        - "RateLimiter"
+      description: "Route without rate limiting decorator"
+
+scope:
+  file_patterns:
+    - "**/*.py"
+    - "**/*.js"
+    - "**/*.ts"
+    - "**/*.java"
+
+  languages:
+    - python
+    - javascript
+    - typescript
+    - java
+
+context:
+  # Check if rate limiting is imported/configured elsewhere
+  check_imports: true
+  check_middleware: true
+
+false_positive_indicators:
+  - pattern: '@limiter\.limit|@rate_limit|@throttle'
+    description: "Rate limiting decorator present"
+
+  - pattern: 'app\.use\(rateLimit|app\.use\(rateLimiter'
+    description: "Rate limiting middleware configured"
+
+  - pattern: '/health|/metrics|/status|/ping'
+    description: "Health check endpoints (may not need rate limiting)"
+
+suppression_comment: "# nosec: rate-limiting"
+
+remediation:
+  description: |
+    Implement rate limiting on all API endpoints to prevent abuse and protect against
+    denial of service attacks. Use stricter limits on authentication and sensitive endpoints.
+
+  steps:
+    - "Install rate limiting library (Flask-Limiter, express-rate-limit, Bucket4j)"
+    - "Configure global rate limits for all API endpoints"
+    - "Implement stricter limits on authentication endpoints (e.g., 5 per minute)"
+    - "Implement per-user rate limiting for authenticated endpoints"
+    - "Return 429 Too Many Requests with Retry-After header when rate limit exceeded"
+    - "Log rate limit violations for security monitoring"
+    - "Consider implementing different tiers of rate limits (free, premium, enterprise)"
+
+  best_practices:
+    - "Rate limit by: IP address, user ID, API key, or combination"
+    - "Use sliding window or token bucket algorithms for fairness"
+    - "Implement exponential backoff for repeated violations"
+    - "Whitelist trusted IPs or services if needed"
+    - "Monitor rate limit metrics to tune limits appropriately"
+    - "Implement CAPTCHA for repeated authentication failures"
+    - "Document rate limits in API documentation"
+
+  code_examples:
+    - language: python
+      framework: Flask
+      insecure: |
+        # INSECURE - No rate limiting
+        from flask import Flask, request, jsonify
+
+        app = Flask(__name__)
+
+        @app.route('/api/login', methods=['POST'])
+        def login():
+            username = request.json.get('username')
+            password = request.json.get('password')
+
+            # Authentication logic...
+            if authenticate(username, password):
+                return jsonify({'token': generate_token(username)})
+            else:
+                return jsonify({'error': 'Invalid credentials'}), 401
+
+        @app.route('/api/users/<user_id>', methods=['GET'])
+        def get_user(user_id):
+            # No rate limiting - vulnerable to scraping
+            user = User.query.get(user_id)
+            return jsonify(user.to_dict())
+
+      secure: |
+        # SECURE - Rate limiting implemented
+        from flask import Flask, request, jsonify
+        from flask_limiter import Limiter
+        from flask_limiter.util import get_remote_address
+
+        app = Flask(__name__)
+
+        # Initialize rate limiter
+        limiter = Limiter(
+            app=app,
+            key_func=get_remote_address,
+            default_limits=["200 per day", "50 per hour"],
+            storage_uri="redis://localhost:6379"
+        )
+
+        # Strict rate limit on authentication endpoint
+        @app.route('/api/login', methods=['POST'])
+        @limiter.limit("5 per minute")  # Only 5 login attempts per minute
+        def login():
+            username = request.json.get('username')
+            password = request.json.get('password')
+
+            if authenticate(username, password):
+                return jsonify({'token': generate_token(username)})
+            else:
+                return jsonify({'error': 'Invalid credentials'}), 401
+
+        # Rate limit on data endpoints
+        @app.route('/api/users/<user_id>', methods=['GET'])
+        @limiter.limit("100 per hour")  # Prevent scraping
+        def get_user(user_id):
+            user = User.query.get(user_id)
+            return jsonify(user.to_dict())
+
+        # Error handler for rate limit exceeded
+        @app.errorhandler(429)
+        def ratelimit_handler(e):
+            return jsonify({
+                'error': 'Rate limit exceeded',
+                'message': str(e.description)
+            }), 429
+
+    - language: javascript
+      framework: Express
+      insecure: |
+        // INSECURE - No rate limiting
+        const express = require('express');
+        const app = express();
+
+        app.post('/api/login', (req, res) => {
+          const { username, password } = req.body;
+
+          // Vulnerable to brute force attacks
+          if (authenticate(username, password)) {
+            res.json({ token: generateToken(username) });
+          } else {
+            res.status(401).json({ error: 'Invalid credentials' });
+          }
+        });
+
+        app.get('/api/users/:id', (req, res) => {
+          // No rate limiting - vulnerable to scraping
+          const user = getUserById(req.params.id);
+          res.json(user);
+        });
+
+      secure: |
+        // SECURE - Rate limiting implemented
+        const express = require('express');
+        const rateLimit = require('express-rate-limit');
+        const app = express();
+
+        // General API rate limiter
+        const apiLimiter = rateLimit({
+          windowMs: 15 * 60 * 1000, // 15 minutes
+          max: 100, // Limit each IP to 100 requests per windowMs
+          standardHeaders: true,
+          legacyHeaders: false,
+          message: 'Too many requests from this IP, please try again later'
+        });
+
+        // Strict rate limiter for authentication
+        const authLimiter = rateLimit({
+          windowMs: 60 * 1000, // 1 minute
+          max: 5, // 5 requests per minute
+          skipSuccessfulRequests: false,
+          message: 'Too many login attempts, please try again later'
+        });
+
+        // Apply rate limiters
+        app.use('/api/', apiLimiter);
+
+        app.post('/api/login', authLimiter, (req, res) => {
+          const { username, password } = req.body;
+
+          if (authenticate(username, password)) {
+            res.json({ token: generateToken(username) });
+          } else {
+            res.status(401).json({ error: 'Invalid credentials' });
+          }
+        });
+
+        app.get('/api/users/:id', apiLimiter, (req, res) => {
+          const user = getUserById(req.params.id);
+          res.json(user);
+        });
+
+    - language: python
+      framework: FastAPI
+      insecure: |
+        # INSECURE - No rate limiting
+        from fastapi import FastAPI, HTTPException
+        from pydantic import BaseModel
+
+        app = FastAPI()
+
+        class LoginRequest(BaseModel):
+            username: str
+            password: str
+
+        @app.post("/api/login")
+        async def login(request: LoginRequest):
+            # No rate limiting - vulnerable to brute force
+            if authenticate(request.username, request.password):
+                return {"token": generate_token(request.username)}
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        @app.get("/api/users/{user_id}")
+        async def get_user(user_id: int):
+            # No rate limiting
+            user = await get_user_from_db(user_id)
+            return user
+
+      secure: |
+        # SECURE - Rate limiting with slowapi
+        from fastapi import FastAPI, HTTPException, Request
+        from slowapi import Limiter, _rate_limit_exceeded_handler
+        from slowapi.util import get_remote_address
+        from slowapi.errors import RateLimitExceeded
+        from pydantic import BaseModel
+
+        limiter = Limiter(key_func=get_remote_address)
+        app = FastAPI()
+        app.state.limiter = limiter
+        app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+        class LoginRequest(BaseModel):
+            username: str
+            password: str
+
+        @app.post("/api/login")
+        @limiter.limit("5/minute")  # Strict limit on authentication
+        async def login(request: Request, login_data: LoginRequest):
+            if authenticate(login_data.username, login_data.password):
+                return {"token": generate_token(login_data.username)}
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        @app.get("/api/users/{user_id}")
+        @limiter.limit("100/hour")  # Prevent scraping
+        async def get_user(request: Request, user_id: int):
+            user = await get_user_from_db(user_id)
+            return user
+
+    - language: java
+      framework: Spring Boot
+      insecure: |
+        // INSECURE - No rate limiting
+        import org.springframework.web.bind.annotation.*;
+
+        @RestController
+        @RequestMapping("/api")
+        public class UserController {
+
+            @PostMapping("/login")
+            public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+                // No rate limiting - vulnerable to brute force
+                if (authService.authenticate(request.getUsername(), request.getPassword())) {
+                    String token = tokenService.generateToken(request.getUsername());
+                    return ResponseEntity.ok(new TokenResponse(token));
+                }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Invalid credentials"));
+            }
+
+            @GetMapping("/users/{id}")
+            public ResponseEntity<User> getUser(@PathVariable Long id) {
+                // No rate limiting
+                User user = userService.getUser(id);
+                return ResponseEntity.ok(user);
+            }
+        }
+
+      secure: |
+        // SECURE - Rate limiting with Bucket4j
+        import io.github.bucket4j.Bandwidth;
+        import io.github.bucket4j.Bucket;
+        import io.github.bucket4j.Bucket4j;
+        import io.github.bucket4j.Refill;
+        import org.springframework.web.bind.annotation.*;
+
+        @RestController
+        @RequestMapping("/api")
+        public class UserController {
+
+            private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+
+            // Create rate limiter bucket
+            private Bucket createBucket(int capacity, int refillTokens, Duration refillDuration) {
+                Bandwidth limit = Bandwidth.classic(capacity,
+                    Refill.intervally(refillTokens, refillDuration));
+                return Bucket4j.builder()
+                    .addLimit(limit)
+                    .build();
+            }
+
+            // Get bucket for IP address
+            private Bucket resolveBucket(HttpServletRequest request) {
+                String ip = request.getRemoteAddr();
+                return buckets.computeIfAbsent(ip,
+                    k -> createBucket(100, 100, Duration.ofHours(1)));
+            }
+
+            @PostMapping("/login")
+            public ResponseEntity<?> login(@RequestBody LoginRequest request,
+                                          HttpServletRequest httpRequest) {
+                // Strict rate limiting on authentication
+                Bucket bucket = buckets.computeIfAbsent(
+                    httpRequest.getRemoteAddr() + ":login",
+                    k -> createBucket(5, 5, Duration.ofMinutes(1))
+                );
+
+                if (!bucket.tryConsume(1)) {
+                    return ResponseEntity.status(429)
+                        .body(new ErrorResponse("Too many login attempts"));
+                }
+
+                if (authService.authenticate(request.getUsername(), request.getPassword())) {
+                    String token = tokenService.generateToken(request.getUsername());
+                    return ResponseEntity.ok(new TokenResponse(token));
+                }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Invalid credentials"));
+            }
+
+            @GetMapping("/users/{id}")
+            public ResponseEntity<?> getUser(@PathVariable Long id,
+                                            HttpServletRequest request) {
+                Bucket bucket = resolveBucket(request);
+
+                if (!bucket.tryConsume(1)) {
+                    return ResponseEntity.status(429)
+                        .body(new ErrorResponse("Rate limit exceeded"));
+                }
+
+                User user = userService.getUser(id);
+                return ResponseEntity.ok(user);
+            }
+        }
+
+references:
+  - "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"
+  - "https://cwe.mitre.org/data/definitions/770.html"
+  - "https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html"
+  - "https://tools.ietf.org/html/rfc6585#section-4"
+
+test_cases:
+  - should_trigger: true
+    code: |
+      @app.route('/api/login', methods=['POST'])
+      def login():
+          # Missing rate limiting
+          pass
+    description: "Flask route without rate limiting"
+
+  - should_trigger: true
+    code: |
+      app.post('/api/users', (req, res) => {
+        // No rate limiting
+      });
+    description: "Express route without rate limiting"
+
+  - should_trigger: false
+    code: |
+      @app.route('/api/login', methods=['POST'])
+      @limiter.limit("5 per minute")
+      def login():
+          pass
+    description: "Flask route with rate limiting decorator"
+
+  - should_trigger: false
+    code: |
+      @app.route('/health')
+      def health():
+          return 'OK'
+    description: "Health check endpoint (doesn't need rate limiting)"
+
+created: 2024-01-15
+author: Security Team
+last_updated: 2024-01-15
+version: 1.0.0
+status: active
+tags:
+  - api-security
+  - rate-limiting
+  - brute-force
+  - dos
+  - authentication

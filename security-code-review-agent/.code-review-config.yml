@@ -1,0 +1,69 @@
+# Security Code Review Configuration Example
+# Copy this file to your project root as .code-review-config.yml
+
+project:
+  name: "Example Application"
+  description: "Example configuration for security code review"
+
+scope:
+  include:
+    - "src/**/*.py"
+    - "src/**/*.js"
+    - "src/**/*.ts"
+    - "src/**/*.java"
+    - "api/**/*"
+    - "lib/**/*"
+
+  exclude:
+    - "**/node_modules/**"
+    - "**/vendor/**"
+    - "**/venv/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/*.test.js"
+    - "**/*.test.py"
+    - "**/*.spec.ts"
+    - "**/test/**"
+    - "**/tests/**"
+
+rules:
+  custom_rules_dir: "security-rules"
+  load_defaults: true
+
+compliance:
+  pci_dss:
+    enabled: false
+  soc2:
+    enabled: true
+  pipeda:
+    enabled: false
+  ccpa:
+    enabled: false
+  hipaa:
+    enabled: false
+  nist_csf:
+    enabled: true
+
+reporting:
+  output_dir: "security-reports"
+  format: "markdown"
+  include_code_snippets: true
+  include_poc: false
+
+api_analysis:
+  enabled: true
+  auto_detect_endpoints: true
+  check_rate_limiting: true
+
+secrets:
+  enabled: true
+  entropy_threshold: 4.5
+
+thresholds:
+  max_critical: 0
+  max_high: 5
+  fail_on_regression: true
+
+performance:
+  max_parallel_files: 4
+  file_timeout: 300
