@@ -1,0 +1,395 @@
+# Custom Rule Example: Database Connection Security
+# This rule checks for insecure database connection practices
+
+rule_id: CUSTOM-DB-001
+title: "Insecure Database Connection Configuration"
+description: |
+  Detects insecure database connection practices including cleartext credentials in
+  connection strings, missing SSL/TLS encryption, overly permissive user privileges,
+  and lack of connection timeouts. Database connections should use encrypted connections,
+  credentials from secure storage, and follow principle of least privilege.
+
+severity: HIGH
+category: security
+cwe: CWE-522
+owasp: "A02:2021 - Cryptographic Failures"
+
+compliance:
+  - framework: PCI_DSS
+    requirement: "4.1"
+    description: "Use strong cryptography and security protocols to safeguard sensitive cardholder data during transmission"
+
+  - framework: PCI_DSS
+    requirement: "8.2.1"
+    description: "Do not use vendor-supplied defaults for system passwords"
+
+  - framework: SOC2
+    requirement: "CC6.7"
+    description: "The entity restricts the transmission, movement, and removal of information to authorized internal and external users and processes"
+
+  - framework: HIPAA
+    requirement: "164.312(e)(1)"
+    description: "Transmission Security - Implement technical security measures to guard against unauthorized access to ePHI"
+
+detection:
+  patterns:
+    # Cleartext credentials in connection strings
+    - pattern: '(mysql|postgresql|postgres|mongodb|mssql|oracle)://[^:]+:[^@]+@'
+      description: "Database URL with embedded credentials"
+      confidence: 0.9
+
+    - pattern: '(password|passwd|pwd)=[^;"\s]{3,}'
+      description: "Password in connection string"
+      confidence: 0.85
+
+    - pattern: 'Server=.*;Password=[^;]+;'
+      description: "SQL Server connection string with password"
+      confidence: 0.9
+
+    # Missing SSL/TLS encryption
+    - pattern: 'sslmode\s*=\s*(disable|allow|prefer)'
+      description: "PostgreSQL SSL mode not required"
+      confidence: 0.8
+
+    - pattern: 'ssl\s*=\s*(false|False|0)'
+      description: "SSL disabled in database configuration"
+      confidence: 0.85
+
+    - pattern: 'useSSL\s*=\s*false'
+      description: "MySQL useSSL disabled"
+      confidence: 0.85
+
+    # Dangerous database user privileges
+    - pattern: 'GRANT ALL PRIVILEGES'
+      description: "Granting all privileges (overly permissive)"
+      confidence: 0.8
+
+    - pattern: 'user\s*=\s*["\']?(root|admin|sa|postgres|mysql)["\']?'
+      description: "Using superuser account for application"
+      confidence: 0.7
+
+    # MongoDB specific issues
+    - pattern: 'mongodb://[^/]+/\?authSource=admin'
+      description: "MongoDB connecting with admin auth source"
+      confidence: 0.6
+
+  function_calls:
+    - "pymysql.connect"
+    - "psycopg2.connect"
+    - "mysql.connector.connect"
+    - "MongoClient"
+    - "createConnection"
+
+scope:
+  file_patterns:
+    - "**/*.py"
+    - "**/*.js"
+    - "**/*.java"
+    - "**/*.go"
+    - "**/*.rb"
+    - "**/*.php"
+    - "**/*.ts"
+    - "**/*.yml"
+    - "**/*.yaml"
+    - "**/*.properties"
+    - "**/*.xml"
+
+  exclude:
+    - "**/test/**"
+    - "**/tests/**"
+    - "**/*.test.*"
+    - "**/docker-compose*.yml"
+
+  languages:
+    - python
+    - javascript
+    - typescript
+    - java
+    - go
+    - ruby
+    - php
+
+context:
+  check_comments: false
+  check_strings: true
+  check_variable_names: true
+
+false_positive_indicators:
+  - pattern: 'example\.com|localhost:3306|127\.0\.0\.1|example|placeholder'
+    description: "Example or local development connections"
+
+suppression_comment: "# nosec: database-connection"
+
+remediation:
+  description: |
+    Secure database connections by using encrypted connections, storing credentials
+    securely, following principle of least privilege, and implementing proper connection
+    management.
+
+  steps:
+    - "Remove hardcoded credentials from connection strings"
+    - "Store credentials in environment variables or secret management systems"
+    - "Enable SSL/TLS encryption for database connections"
+    - "Use application-specific database users with minimal required privileges"
+    - "Implement connection timeouts and retry logic"
+    - "Use connection pooling for better resource management"
+    - "Enable audit logging for database connections"
+    - "Regularly rotate database credentials"
+
+  best_practices:
+    - "Use parameterized queries (covered by SQL injection rules)"
+    - "Implement database connection retry with exponential backoff"
+    - "Use read replicas for read-only operations"
+    - "Monitor database connection metrics"
+    - "Set connection and query timeouts"
+    - "Close connections properly in all code paths"
+
+  code_examples:
+    - language: python
+      insecure: |
+        # INSECURE - Multiple security issues
+        import psycopg2
+
+        # Hardcoded credentials, no SSL
+        conn = psycopg2.connect(
+            host="db.example.com",
+            database="myapp",
+            user="postgres",  # Superuser account
+            password="mypassword123",  # Hardcoded password
+            sslmode="disable"  # No encryption
+        )
+
+      secure: |
+        # SECURE - Environment variables, SSL, least privilege user
+        import psycopg2
+        import os
+
+        # Credentials from environment variables
+        DB_HOST = os.environ.get('DB_HOST')
+        DB_NAME = os.environ.get('DB_NAME')
+        DB_USER = os.environ.get('DB_USER')  # Application-specific user, not superuser
+        DB_PASSWORD = os.environ.get('DB_PASSWORD')
+
+        if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+            raise ValueError("Database configuration not complete")
+
+        # Connection with SSL required
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            sslmode="require",  # Require SSL/TLS
+            connect_timeout=10,
+            options="-c statement_timeout=30000"  # 30 second query timeout
+        )
+
+        # Or better: Use connection pooling
+        from psycopg2 import pool
+
+        connection_pool = pool.SimpleConnectionPool(
+            1,  # minconn
+            20,  # maxconn
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            sslmode="require"
+        )
+
+    - language: javascript
+      insecure: |
+        // INSECURE - Hardcoded credentials, no SSL
+        const mysql = require('mysql');
+
+        const connection = mysql.createConnection({
+          host: 'db.example.com',
+          user: 'root',  // Root user
+          password: 'password123',  // Hardcoded
+          database: 'myapp',
+          ssl: false  // No encryption
+        });
+
+      secure: |
+        // SECURE - Environment variables, SSL, connection pooling
+        const mysql = require('mysql');
+
+        const pool = mysql.createPool({
+          host: process.env.DB_HOST,
+          user: process.env.DB_USER,  // Application-specific user
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_NAME,
+          ssl: {
+            rejectUnauthorized: true  // Verify SSL certificate
+          },
+          connectionLimit: 10,
+          connectTimeout: 10000,
+          acquireTimeout: 10000,
+          waitForConnections: true,
+          queueLimit: 0
+        });
+
+        // Use the pool for queries
+        pool.query('SELECT * FROM users WHERE id = ?', [userId], (err, results) => {
+          if (err) {
+            console.error('Database error:', err);
+            return;
+          }
+          // Process results
+        });
+
+    - language: java
+      insecure: |
+        // INSECURE - Hardcoded credentials, no SSL
+        import java.sql.Connection;
+        import java.sql.DriverManager;
+
+        String url = "jdbc:postgresql://db.example.com:5432/myapp";
+        String user = "postgres";  // Superuser
+        String password = "password123";  // Hardcoded
+
+        Connection conn = DriverManager.getConnection(url, user, password);
+
+      secure: |
+        // SECURE - Environment variables, SSL, connection pooling
+        import java.sql.Connection;
+        import javax.sql.DataSource;
+        import com.zaxxer.hikari.HikariConfig;
+        import com.zaxxer.hikari.HikariDataSource;
+
+        public class DatabaseConfig {
+            private static DataSource dataSource;
+
+            static {
+                HikariConfig config = new HikariConfig();
+
+                // Get credentials from environment
+                String dbHost = System.getenv("DB_HOST");
+                String dbName = System.getenv("DB_NAME");
+                String dbUser = System.getenv("DB_USER");
+                String dbPassword = System.getenv("DB_PASSWORD");
+
+                if (dbHost == null || dbName == null || dbUser == null || dbPassword == null) {
+                    throw new IllegalStateException("Database configuration incomplete");
+                }
+
+                // JDBC URL with SSL
+                config.setJdbcUrl(String.format(
+                    "jdbc:postgresql://%s:5432/%s?sslmode=require",
+                    dbHost, dbName
+                ));
+                config.setUsername(dbUser);
+                config.setPassword(dbPassword);
+
+                // Connection pool settings
+                config.setMaximumPoolSize(10);
+                config.setMinimumIdle(2);
+                config.setConnectionTimeout(10000);
+                config.setIdleTimeout(600000);
+                config.setMaxLifetime(1800000);
+
+                dataSource = new HikariDataSource(config);
+            }
+
+            public static Connection getConnection() throws SQLException {
+                return dataSource.getConnection();
+            }
+        }
+
+    - language: python
+      framework: Django
+      insecure: |
+        # INSECURE - settings.py with hardcoded credentials
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'myapp',
+                'USER': 'postgres',
+                'PASSWORD': 'password123',  # Hardcoded
+                'HOST': 'db.example.com',
+                'PORT': '5432',
+                'OPTIONS': {
+                    'sslmode': 'disable',  # No SSL
+                }
+            }
+        }
+
+      secure: |
+        # SECURE - settings.py with environment variables and SSL
+        import os
+
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME'),
+                'USER': os.environ.get('DB_USER'),
+                'PASSWORD': os.environ.get('DB_PASSWORD'),
+                'HOST': os.environ.get('DB_HOST'),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+                'CONN_MAX_AGE': 600,  # Connection pooling
+                'OPTIONS': {
+                    'sslmode': 'require',  # Require SSL
+                    'connect_timeout': 10,
+                },
+            }
+        }
+
+references:
+  - "https://cwe.mitre.org/data/definitions/522.html"
+  - "https://cheatsheetseries.owasp.org/cheatsheets/Database_Security_Cheat_Sheet.html"
+  - "https://www.postgresql.org/docs/current/libpq-ssl.html"
+  - "https://dev.mysql.com/doc/refman/8.0/en/using-encrypted-connections.html"
+
+test_cases:
+  - should_trigger: true
+    code: |
+      conn = psycopg2.connect(
+          host="db.example.com",
+          user="postgres",
+          password="secretpass",
+          sslmode="disable"
+      )
+    description: "PostgreSQL connection with hardcoded password and no SSL"
+
+  - should_trigger: true
+    code: |
+      const conn = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'admin123',
+        ssl: false
+      });
+    description: "MySQL connection with root user and no SSL"
+
+  - should_trigger: true
+    code: |
+      connection_string = "Server=db.example.com;Database=myapp;User Id=sa;Password=Password123;"
+    description: "SQL Server connection string with embedded password"
+
+  - should_trigger: false
+    code: |
+      conn = psycopg2.connect(
+          host=os.environ['DB_HOST'],
+          user=os.environ['DB_USER'],
+          password=os.environ['DB_PASSWORD'],
+          sslmode="require"
+      )
+    description: "Secure PostgreSQL connection with environment variables and SSL"
+
+  - should_trigger: false
+    code: |
+      # Local development only
+      conn = psycopg2.connect("postgresql://localhost/test_db")
+    description: "Local development database (acceptable for dev environments)"
+
+created: 2024-01-15
+author: Security Team
+last_updated: 2024-01-15
+version: 1.0.0
+status: active
+tags:
+  - database
+  - credentials
+  - encryption
+  - ssl
+  - connection-security

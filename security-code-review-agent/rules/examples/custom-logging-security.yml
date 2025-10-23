@@ -1,0 +1,500 @@
+# Custom Rule Example: Logging Security
+# This rule checks for security issues in logging practices
+
+rule_id: CUSTOM-LOG-001
+title: "Insecure Logging Practices"
+description: |
+  Detects insecure logging practices including logging of sensitive data (passwords,
+  tokens, PII, payment card data), missing security event logging, log injection
+  vulnerabilities, and improper log protection. Logs should capture security-relevant
+  events without exposing sensitive information.
+
+severity: MEDIUM
+category: security
+cwe: CWE-532
+owasp: "A09:2021 - Security Logging and Monitoring Failures"
+
+compliance:
+  - framework: PCI_DSS
+    requirement: "10.1"
+    description: "Implement audit trails to link all access to system components to each individual user"
+
+  - framework: PCI_DSS
+    requirement: "10.3"
+    description: "Record audit trail entries for all system components"
+
+  - framework: PCI_DSS
+    requirement: "3.4"
+    description: "Render PAN unreadable anywhere it is stored"
+
+  - framework: SOC2
+    requirement: "CC7.2"
+    description: "The entity monitors system components and the operation of those components for anomalies"
+
+  - framework: HIPAA
+    requirement: "164.312(b)"
+    description: "Audit controls to record and examine activity in information systems containing ePHI"
+
+  - framework: PIPEDA
+    requirement: "Principle 7"
+    description: "Personal information shall be protected by security safeguards"
+
+detection:
+  # Logging sensitive data
+  patterns:
+    - pattern: '(log|logger|logging|console)\.(info|debug|warn|error|log)\([^)]*\b(password|passwd|pwd|secret|token|api_key|apikey|credit_card|ssn|sin)\b'
+      description: "Logging potentially sensitive data"
+      confidence: 0.85
+
+    - pattern: '(log|logger|logging)\.(info|debug|warn|error)\([^)]*Authorization[^)]*\)'
+      description: "Logging authorization headers (may contain tokens)"
+      confidence: 0.8
+
+    - pattern: 'console\.(log|info|debug|warn|error)\([^)]*(password|token|secret|key)[^)]*\)'
+      description: "Console logging sensitive data"
+      confidence: 0.8
+      language: javascript
+
+    # Missing authentication logging
+    - pattern: 'def (login|authenticate|signin)[^:]*:[^l]{1,200}(?!log)'
+      description: "Authentication function without logging"
+      confidence: 0.4
+      language: python
+
+    # Log injection vulnerabilities
+    - pattern: '(log|logger)\.(info|debug|warn|error)\(["\'][^"\']*\{\}[^"\']*["\']\s*\.\s*format\([^)]*request'
+      description: "Potential log injection via string formatting with user input"
+      confidence: 0.7
+      language: python
+
+    - pattern: 'logger\.(info|debug|warn|error)\(`.*\${.*request.*}.*`\)'
+      description: "Potential log injection via template literals with user input"
+      confidence: 0.7
+      language: javascript
+
+    # Production console.log (should use proper logging)
+    - pattern: 'console\.(log|info|debug|warn|error)\('
+      description: "console.log in production code (should use proper logger)"
+      confidence: 0.5
+      language: javascript
+
+    # Logging to files without rotation/protection
+    - pattern: 'FileHandler\([^)]*mode\s*=\s*["\']w["\']\)'
+      description: "Log file opened in write mode (overwrites, no append)"
+      confidence: 0.6
+      language: python
+
+scope:
+  file_patterns:
+    - "**/*.py"
+    - "**/*.js"
+    - "**/*.ts"
+    - "**/*.java"
+    - "**/*.go"
+    - "**/*.rb"
+    - "**/*.php"
+
+  exclude:
+    - "**/test/**"
+    - "**/tests/**"
+    - "**/*.test.*"
+    - "**/*.spec.*"
+
+  languages:
+    - python
+    - javascript
+    - typescript
+    - java
+    - go
+    - ruby
+    - php
+
+context:
+  check_comments: false
+  check_strings: true
+  check_variable_names: true
+
+false_positive_indicators:
+  - pattern: 'test|example|demo|sanitized|redacted|masked'
+    description: "Test code or already sanitized data"
+
+suppression_comment: "# nosec: logging"
+
+remediation:
+  description: |
+    Implement secure logging practices that capture security events without exposing
+    sensitive information, protect logs from tampering, and enable security monitoring.
+
+  steps:
+    - "Never log sensitive data (passwords, tokens, PII, payment cards, health data)"
+    - "Implement log sanitization to redact sensitive fields"
+    - "Log all security-relevant events (authentication, authorization, input validation failures)"
+    - "Use structured logging with consistent formats"
+    - "Protect log files with appropriate permissions"
+    - "Implement log rotation and retention policies"
+    - "Sanitize user input before logging to prevent log injection"
+    - "Use centralized logging for production systems"
+
+  best_practices:
+    - "Log what happened, when, who, where, and the outcome"
+    - "Include correlation IDs for tracing requests"
+    - "Use appropriate log levels (DEBUG, INFO, WARN, ERROR, CRITICAL)"
+    - "Synchronize log timestamps across systems"
+    - "Implement log monitoring and alerting"
+    - "Separate security logs from application logs"
+    - "Encrypt logs containing sensitive contexts"
+    - "Test log sanitization thoroughly"
+
+  security_events_to_log:
+    - "Authentication attempts (success and failure)"
+    - "Authorization failures"
+    - "Input validation failures"
+    - "Session management events"
+    - "Application errors and exceptions"
+    - "Configuration changes"
+    - "Administrative actions"
+    - "Data access and modifications"
+
+  data_never_to_log:
+    - "Passwords (plaintext or hashed)"
+    - "Session tokens or session IDs"
+    - "API keys and secrets"
+    - "Credit card numbers (PAN)"
+    - "CVV/CVV2"
+    - "PINs"
+    - "Social Security Numbers"
+    - "Protected Health Information (PHI)"
+    - "Full authentication credentials"
+
+  code_examples:
+    - language: python
+      insecure: |
+        # INSECURE - Multiple logging security issues
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        def login(username, password):
+            # INSECURE: Logging password
+            logger.info(f"Login attempt: username={username}, password={password}")
+
+            if authenticate(username, password):
+                token = generate_token(username)
+                # INSECURE: Logging token
+                logger.info(f"Login successful, token: {token}")
+                return token
+            else:
+                # Missing failure logging
+                return None
+
+        def process_payment(card_number, cvv):
+            # INSECURE: Logging credit card data
+            logger.debug(f"Processing payment for card {card_number}, CVV {cvv}")
+            # Payment processing...
+
+        def log_user_activity(user_input):
+            # INSECURE: Log injection vulnerability
+            logger.info(f"User activity: {user_input}")
+
+      secure: |
+        # SECURE - Proper logging practices
+        import logging
+        import re
+
+        logger = logging.getLogger(__name__)
+
+        def sanitize_for_logging(data, sensitive_fields=None):
+            """
+            Sanitize data before logging by redacting sensitive fields.
+            """
+            if sensitive_fields is None:
+                sensitive_fields = ['password', 'token', 'secret', 'api_key',
+                                  'credit_card', 'cvv', 'ssn']
+
+            if isinstance(data, dict):
+                sanitized = {}
+                for key, value in data.items():
+                    if any(field in key.lower() for field in sensitive_fields):
+                        sanitized[key] = "***REDACTED***"
+                    else:
+                        sanitized[key] = value
+                return sanitized
+            return data
+
+        def redact_card_number(card_number):
+            """Show only last 4 digits of card number."""
+            if len(card_number) > 4:
+                return "*" * (len(card_number) - 4) + card_number[-4:]
+            return "****"
+
+        def login(username, password):
+            # SECURE: Log authentication attempt without password
+            logger.info(f"Login attempt for username: {username}")
+
+            if authenticate(username, password):
+                token = generate_token(username)
+                # SECURE: Log success without token
+                logger.info(f"Login successful for username: {username}")
+                return token
+            else:
+                # SECURE: Log authentication failure
+                logger.warning(f"Login failed for username: {username}")
+                return None
+
+        def process_payment(card_number, cvv):
+            # SECURE: Log with redacted card number, no CVV
+            logger.info(f"Processing payment for card ending in {card_number[-4:]}")
+            # Payment processing...
+            logger.info(f"Payment processed successfully for card {redact_card_number(card_number)}")
+
+        def log_user_activity(user_input):
+            # SECURE: Sanitize user input to prevent log injection
+            # Remove newlines and control characters
+            sanitized_input = re.sub(r'[\r\n\t]', ' ', user_input)
+            # Truncate long inputs
+            if len(sanitized_input) > 200:
+                sanitized_input = sanitized_input[:200] + "..."
+            logger.info(f"User activity: {sanitized_input}")
+
+    - language: javascript
+      insecure: |
+        // INSECURE - Console logging and sensitive data
+        function login(username, password) {
+          // INSECURE: Logging password
+          console.log(`Login attempt: ${username} with password ${password}`);
+
+          if (authenticate(username, password)) {
+            const token = generateToken(username);
+            // INSECURE: Logging token
+            console.log(`Login successful, token: ${token}`);
+            return token;
+          }
+          // Missing failure logging
+          return null;
+        }
+
+        function processPayment(cardNumber, cvv) {
+          // INSECURE: Logging credit card data
+          console.log(`Processing payment for card ${cardNumber}, CVV ${cvv}`);
+          // Payment processing...
+        }
+
+      secure: |
+        // SECURE - Proper logging with Winston
+        const winston = require('winston');
+
+        // Configure structured logging
+        const logger = winston.createLogger({
+          level: 'info',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.json()
+          ),
+          transports: [
+            new winston.transports.File({ filename: 'error.log', level: 'error' }),
+            new winston.transports.File({ filename: 'combined.log' })
+          ]
+        });
+
+        // Sanitization function
+        function sanitizeForLogging(data, sensitiveFields = [
+          'password', 'token', 'secret', 'apiKey', 'creditCard', 'cvv', 'ssn'
+        ]) {
+          if (typeof data === 'object' && data !== null) {
+            const sanitized = {};
+            for (const [key, value] of Object.entries(data)) {
+              if (sensitiveFields.some(field =>
+                key.toLowerCase().includes(field.toLowerCase()))) {
+                sanitized[key] = '***REDACTED***';
+              } else {
+                sanitized[key] = value;
+              }
+            }
+            return sanitized;
+          }
+          return data;
+        }
+
+        function redactCardNumber(cardNumber) {
+          if (cardNumber && cardNumber.length > 4) {
+            return '*'.repeat(cardNumber.length - 4) + cardNumber.slice(-4);
+          }
+          return '****';
+        }
+
+        function login(username, password) {
+          // SECURE: Log attempt without password
+          logger.info({
+            event: 'login_attempt',
+            username: username,
+            timestamp: new Date().toISOString()
+          });
+
+          if (authenticate(username, password)) {
+            const token = generateToken(username);
+            // SECURE: Log success without token
+            logger.info({
+              event: 'login_success',
+              username: username,
+              timestamp: new Date().toISOString()
+            });
+            return token;
+          } else {
+            // SECURE: Log failure
+            logger.warn({
+              event: 'login_failure',
+              username: username,
+              timestamp: new Date().toISOString()
+            });
+            return null;
+          }
+        }
+
+        function processPayment(cardNumber, cvv) {
+          // SECURE: Log with redacted card number
+          logger.info({
+            event: 'payment_processing',
+            cardLastFour: cardNumber.slice(-4),
+            timestamp: new Date().toISOString()
+          });
+
+          // Payment processing...
+
+          logger.info({
+            event: 'payment_completed',
+            cardNumber: redactCardNumber(cardNumber),
+            timestamp: new Date().toISOString()
+          });
+        }
+
+    - language: java
+      insecure: |
+        // INSECURE - Logging sensitive data
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
+
+        public class AuthService {
+            private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
+            public String login(String username, String password) {
+                // INSECURE: Logging password
+                logger.info("Login attempt: username={}, password={}", username, password);
+
+                if (authenticate(username, password)) {
+                    String token = generateToken(username);
+                    // INSECURE: Logging token
+                    logger.info("Login successful, token: {}", token);
+                    return token;
+                }
+                // Missing failure logging
+                return null;
+            }
+
+            public void processPayment(String cardNumber, String cvv) {
+                // INSECURE: Logging credit card data
+                logger.debug("Processing payment for card {}, CVV {}", cardNumber, cvv);
+                // Payment processing...
+            }
+        }
+
+      secure: |
+        // SECURE - Proper logging practices
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
+        import org.slf4j.MDC;
+
+        public class AuthService {
+            private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+            private static final Logger securityLogger = LoggerFactory.getLogger("security");
+
+            private String redactCardNumber(String cardNumber) {
+                if (cardNumber != null && cardNumber.length() > 4) {
+                    return "*".repeat(cardNumber.length() - 4) + cardNumber.substring(cardNumber.length() - 4);
+                }
+                return "****";
+            }
+
+            private String sanitizeForLogging(String input) {
+                if (input == null) return null;
+                // Remove newlines and limit length
+                return input.replaceAll("[\\r\\n]", " ").substring(0, Math.min(input.length(), 200));
+            }
+
+            public String login(String username, String password) {
+                // Add correlation ID for tracing
+                MDC.put("correlationId", UUID.randomUUID().toString());
+                MDC.put("username", username);
+
+                // SECURE: Log attempt without password
+                securityLogger.info("Authentication attempt for user: {}", username);
+
+                if (authenticate(username, password)) {
+                    String token = generateToken(username);
+                    // SECURE: Log success without token
+                    securityLogger.info("Authentication successful for user: {}", username);
+
+                    MDC.clear();
+                    return token;
+                } else {
+                    // SECURE: Log failure
+                    securityLogger.warn("Authentication failed for user: {}", username);
+
+                    MDC.clear();
+                    return null;
+                }
+            }
+
+            public void processPayment(String cardNumber, String cvv) {
+                // SECURE: Log with redacted card number, no CVV
+                String lastFour = cardNumber.substring(cardNumber.length() - 4);
+                logger.info("Processing payment for card ending in: {}", lastFour);
+
+                // Payment processing...
+
+                logger.info("Payment completed for card: {}", redactCardNumber(cardNumber));
+            }
+        }
+
+references:
+  - "https://cwe.mitre.org/data/definitions/532.html"
+  - "https://cwe.mitre.org/data/definitions/117.html"
+  - "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+  - "https://owasp.org/www-community/attacks/Log_Injection"
+
+test_cases:
+  - should_trigger: true
+    code: |
+      logger.info(f"User {username} logged in with password {password}")
+    description: "Logging password"
+
+  - should_trigger: true
+    code: |
+      console.log("Token: " + authToken);
+    description: "Logging authentication token"
+
+  - should_trigger: true
+    code: |
+      logger.debug(f"Card number: {card_number}, CVV: {cvv}")
+    description: "Logging credit card data"
+
+  - should_trigger: false
+    code: |
+      logger.info(f"User {username} logged in successfully")
+    description: "Logging without sensitive data"
+
+  - should_trigger: false
+    code: |
+      logger.info(f"Payment processed for card ending in {card_number[-4:]}")
+    description: "Logging redacted card number"
+
+created: 2024-01-15
+author: Security Team
+last_updated: 2024-01-15
+version: 1.0.0
+status: active
+tags:
+  - logging
+  - sensitive-data
+  - log-injection
+  - monitoring
+  - audit
