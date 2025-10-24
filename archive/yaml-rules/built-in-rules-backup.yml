@@ -38,7 +38,7 @@ rules:
           confidence: 0.9
           description: "Python .format() in SQL execution"
 
-        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*f["\']'
+        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*f["\' ]'
           language: python
           confidence: 0.9
           description: "Python f-string in SQL execution"
@@ -305,120 +305,120 @@ rules:
 
     detection:
       patterns:
-        - pattern: '(password|passwd|pwd)\s*=\s*["\'][^"\']{6,}["\']'
+        - pattern: '(password|passwd|pwd)\s*=\s*["\' ][ ^"\' ]{ 6, }[ "\']'
           confidence: 0.8
           description: "Hardcoded password variable"
 
-        - pattern: '(api_key|apikey|api-key|apiKey)\s*=\s*["\'][A-Za-z0-9]{20,}["\']'
+            - pattern: '(api_key|apikey|api-key|apiKey)\s*=\s*["\' ][ A-Za-z0-9 ]{ 20, }[ "\']'
           confidence: 0.9
           description: "Hardcoded API key"
 
-        - pattern: '(secret|secret_key|secretKey)\s*=\s*["\'][^"\']{16,}["\']'
+            - pattern: '(secret|secret_key|secretKey)\s*=\s*["\' ][ ^"\' ]{ 16, }[ "\']'
           confidence: 0.8
           description: "Hardcoded secret"
 
-        - pattern: '(token|auth_token|authToken)\s*=\s*["\'][A-Za-z0-9]{32,}["\']'
+            - pattern: '(token|auth_token|authToken)\s*=\s*["\' ][ A-Za-z0-9 ]{ 32, }[ "\']'
           confidence: 0.8
           description: "Hardcoded authentication token"
 
-        - pattern: 'Bearer\s+\w{20,}'
-          confidence: 0.9
-          description: "Hardcoded Bearer token"
+            - pattern: 'Bearer\s+\w{20,}'
+                confidence: 0.9
+                description: "Hardcoded Bearer token"
 
-        - pattern: '(aws_access_key_id|AWS_ACCESS_KEY_ID|accessKeyId)\s*[:=]\s*["\']AKIA[A-Z0-9]{16}["\']'
+                - pattern: '(aws_access_key_id|AWS_ACCESS_KEY_ID|accessKeyId)\s*[:=]\s*["\' ]AKIA[A-Z0-9]{16}["\']'
           confidence: 0.9
           description: "AWS Access Key ID"
 
-        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\'][A-Za-z0-9/+=]{40}["\']'
+        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\' ][ A-Za-z0-9/+= ]{ 40 }[ "\']'
           confidence: 0.85
           description: "AWS Secret Access Key (40 characters)"
 
-        - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\'][A-Za-z0-9/+=]{100,}["\']'
+            - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\' ][ A-Za-z0-9/+= ]{ 100, }[ "\']'
           confidence: 0.85
           description: "AWS Session Token"
 
-        - pattern: '(AWSAccessKeyId)=[A-Z0-9]{16}'
-          confidence: 0.95
-          description: "AWS Access Key in URL parameter"
+            - pattern: '(AWSAccessKeyId)=[A-Z0-9]{16}'
+                confidence: 0.95
+                description: "AWS Access Key in URL parameter"
 
-    scope:
-      file_patterns:
-        - "**/*.py"
-        - "**/*.js"
-        - "**/*.java"
-        - "**/*.go"
-        - "**/*.rb"
-        - "**/*.php"
-        - "**/*.ts"
-        - "**/*.yml"
-        - "**/*.yaml"
-        - "**/*.json"
-      exclude:
-        - "**/test/**"
-        - "**/tests/**"
-        - "**/*.test.*"
-        - "**/*.spec.*"
+                scope:
+                  file_patterns:
+                    - "**/*.py"
+                    - "**/*.js"
+                    - "**/*.java"
+                    - "**/*.go"
+                    - "**/*.rb"
+                    - "**/*.php"
+                    - "**/*.ts"
+                    - "**/*.yml"
+                    - "**/*.yaml"
+                    - "**/*.json"
+                  exclude:
+                    - "**/test/**"
+                    - "**/tests/**"
+                    - "**/*.test.*"
+                    - "**/*.spec.*"
 
-    false_positive_indicators:
-      - pattern: 'example|sample|dummy|placeholder|test|mock'
-        description: "Example or test credentials"
+                false_positive_indicators:
+                  - pattern: 'example|sample|dummy|placeholder|test|mock'
+                    description: "Example or test credentials"
 
-    suppression_comment: "# nosec: hardcoded-credential"
+                suppression_comment: "# nosec: hardcoded-credential"
 
-    remediation:
-      description: |
-        Never hardcode credentials in source code. Use environment variables,
-        configuration files (not in version control), or secret management systems.
+                remediation:
+                  description: |
+                    Never hardcode credentials in source code. Use environment variables,
+                    configuration files (not in version control), or secret management systems.
 
-      steps:
-        - "Remove hardcoded credentials from source code"
-        - "Store credentials in environment variables"
-        - "Use secret management systems (Vault, AWS Secrets Manager, Azure Key Vault)"
-        - "Add credential files to .gitignore"
-        - "Rotate any exposed credentials immediately"
+                  steps:
+                    - "Remove hardcoded credentials from source code"
+                    - "Store credentials in environment variables"
+                    - "Use secret management systems (Vault, AWS Secrets Manager, Azure Key Vault)"
+                    - "Add credential files to .gitignore"
+                    - "Rotate any exposed credentials immediately"
 
-      code_examples:
-        - language: python
-          insecure: |
-            # INSECURE - Hardcoded credentials
-            API_KEY = "sk_live_1234567890abcdef"
-            DATABASE_PASSWORD = "hardcoded_password_123"
+                  code_examples:
+                    - language: python
+                      insecure: |
+                        # INSECURE - Hardcoded credentials
+                        API_KEY = "sk_live_1234567890abcdef"
+                        DATABASE_PASSWORD = "hardcoded_password_123"
 
-          secure: |
-            # SECURE - Environment variables
-            import os
+                      secure: |
+                        # SECURE - Environment variables
+                        import os
+                        
+                        API_KEY = os.environ.get('API_KEY')
+                        DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+                        
+                        if not API_KEY:
+                            raise ValueError("API_KEY environment variable not set")
 
-            API_KEY = os.environ.get('API_KEY')
-            DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+                references:
+                  - "https://cwe.mitre.org/data/definitions/798.html"
+                  - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
 
-            if not API_KEY:
-                raise ValueError("API_KEY environment variable not set")
+                - rule_id: BUILTIN-CRYPTO-002
+                  title: "Weak Cryptographic Hash - MD5/SHA1"
+                  description: "Use of weak cryptographic hash functions (MD5, SHA1) for security purposes"
+                  severity: HIGH
+                  category: security
+                  cwe: CWE-326
+                  owasp: "A02:2021 - Cryptographic Failures"
 
-    references:
-      - "https://cwe.mitre.org/data/definitions/798.html"
-      - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
+                  detection:
+                    patterns:
+                      - pattern: 'hashlib\.(md5|sha1)\('
+                        language: python
+                        confidence: 0.8
+                        description: "Python MD5/SHA1 usage"
 
-  - rule_id: BUILTIN-CRYPTO-002
-    title: "Weak Cryptographic Hash - MD5/SHA1"
-    description: "Use of weak cryptographic hash functions (MD5, SHA1) for security purposes"
-    severity: HIGH
-    category: security
-    cwe: CWE-326
-    owasp: "A02:2021 - Cryptographic Failures"
-
-    detection:
-      patterns:
-        - pattern: 'hashlib\.(md5|sha1)\('
-          language: python
-          confidence: 0.8
-          description: "Python MD5/SHA1 usage"
-
-        - pattern: 'MessageDigest\.getInstance\(["\']MD5["\']\)'
+                      - pattern: 'MessageDigest\.getInstance\(["\' ]MD5["\']\)'
           language: java
           confidence: 0.8
           description: "Java MD5 MessageDigest"
 
-        - pattern: 'MessageDigest\.getInstance\(["\']SHA-1["\']\)'
+        - pattern: 'MessageDigest\.getInstance\(["\' ]SHA-1["\']\)'
           language: java
           confidence: 0.8
           description: "Java SHA1 MessageDigest"
@@ -591,7 +591,7 @@ rules:
           confidence: 0.9
           description: "HTTP URL for sensitive endpoint"
 
-        - pattern: 'requests\.(get|post|put|delete)\(["\']http://'
+        - pattern: 'requests\.(get|post|put|delete)\(["\' ]http://'
           language: python
           confidence: 0.7
           description: "Python HTTP request"
@@ -911,7 +911,7 @@ rules:
 
     detection:
       patterns:
-        - pattern: '@(app\.route|router\.(get|post))\(["\']/(api|v1|v2)/'
+        - pattern: '@(app\.route|router\.(get|post))\(["\' ]/(api|v1|v2)/'
           confidence: 0.5
           description: "API route definition"
 

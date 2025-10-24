@@ -1,6 +1,7 @@
 # Contributing to Security Code Review Agent
 
-Thank you for your interest in contributing to the Security Code Review Agent! This document provides guidelines for contributions.
+Thank you for your interest in contributing to the Security Code Review Agent! This document provides guidelines for
+contributions.
 
 ## Ways to Contribute
 
@@ -77,9 +78,9 @@ For code changes:
    ```
 
 3. **Make your changes**:
-   - Edit files as needed
-   - Test thoroughly
-   - Update documentation
+    - Edit files as needed
+    - Test thoroughly
+    - Update documentation
 
 4. **Test your changes**:
    ```bash

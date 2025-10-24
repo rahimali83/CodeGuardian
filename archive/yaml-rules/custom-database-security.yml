@@ -64,7 +64,7 @@ detection:
       description: "Granting all privileges (overly permissive)"
       confidence: 0.8
 
-    - pattern: 'user\s*=\s*["\']?(root|admin|sa|postgres|mysql)["\']?'
+    - pattern: 'user\s*=\s*["\' ]?(root|admin|sa|postgres|mysql)["\']?'
       description: "Using superuser account for application"
       confidence: 0.7
 

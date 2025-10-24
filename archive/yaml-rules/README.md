@@ -2,7 +2,8 @@
 
 ## ⚠️ DO NOT USE THESE FILES FOR NEW RULES
 
-This directory contains **archived YAML-based security rules** from CodeGuardian v1.x. These files are preserved for historical reference only.
+This directory contains **archived YAML-based security rules** from CodeGuardian v1.x. These files are preserved for
+historical reference only.
 
 **As of CodeGuardian v2.0.0 (2024-10-24), all security rules use markdown format.**
 
@@ -36,6 +37,7 @@ These are **replaced by** the 25 markdown rules in `rules/rules/codeguard-*.md`
 - **`custom-logging-security.yml`** - Logging security controls (YAML)
 
 These are **replaced by**:
+
 - Markdown example: `rules/examples/custom-aws-credentials.md`
 - Markdown template: `rules/examples/README.md`
 
@@ -86,6 +88,7 @@ Core security principle.
 ```
 
 **SECURE:**
+
 ```python
 # Secure alternative
 ```
@@ -93,6 +96,7 @@ Core security principle.
 ## Remediation
 
 Fix instructions.
+
 ```
 
 ## Migration Path
@@ -117,6 +121,7 @@ These files are preserved to:
 ## File Organization
 
 ```
+
 archive/yaml-rules/
 ├── README.md (this file)
 ├── built-in-rules.yml (v1.x built-in rules)
@@ -127,6 +132,7 @@ archive/yaml-rules/
 ├── custom-database-security.yml (example - YAML)
 ├── custom-logging-security.yml (example - YAML)
 └── YAML-INTEGRATION-HISTORICAL.md (integration documentation)
+
 ```
 
 ## Current Active Files
@@ -135,27 +141,33 @@ The **current, actively used** files are:
 
 ### Built-in Rules (Markdown)
 ```
+
 rules/rules/
 ├── codeguard-0-*.md (17 foundational rules)
 ├── codeguard-1-*.md (5 specific rules)
 └── codeguard-2-*.md (3 comprehensive rules)
+
 ```
 
 ### Custom Rule Examples (Markdown)
 ```
+
 rules/examples/
 ├── custom-aws-credentials.md (markdown example)
 └── README.md (template and guide)
+
 ```
 
 ### Documentation
 ```
+
 /
 ├── README.md (main documentation)
 ├── QUICKSTART.md (quick start guide)
 ├── MARKDOWN-RULES-MIGRATION.md (migration details)
 ├── CLAUDE.md (Claude Code guidance)
 └── rules/RULES-INDEX.md (complete rule catalog)
+
 ```
 
 ## Questions?

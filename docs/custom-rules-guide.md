@@ -7,13 +7,18 @@
 > - `rules/examples/README.md` - Markdown rule template and guide
 > - `QUICKSTART.md` - Quick guide to creating custom rules
 >
-> **This document describes the legacy YAML format** and is kept for historical reference only. New custom rules should use the markdown format.
+> **This document describes the legacy YAML format** and is kept for historical reference only. New custom rules should
+> use the markdown format.
 
 ## Overview
 
-The Security Code Review Agent supports custom security rules that extend the built-in rule set with organization-specific requirements, industry-specific compliance checks, or rules for internal frameworks and libraries. Custom rules allow you to tailor the security analysis to your unique needs while maintaining the standardized reporting and tracking capabilities of the agent.
+The Security Code Review Agent supports custom security rules that extend the built-in rule set with
+organization-specific requirements, industry-specific compliance checks, or rules for internal frameworks and libraries.
+Custom rules allow you to tailor the security analysis to your unique needs while maintaining the standardized reporting
+and tracking capabilities of the agent.
 
-**Note**: This guide describes the **legacy YAML-based format**. For current markdown-based rules, see the resources listed at the top of this document.
+**Note**: This guide describes the **legacy YAML-based format**. For current markdown-based rules, see the resources
+listed at the top of this document.
 
 ## Why Create Custom Rules?
 
@@ -42,7 +47,8 @@ your-project/
 └── .code-review-config.yml      # Configuration specifying rules directory
 ```
 
-The agent automatically loads all `.yml` and `.yaml` files from the configured directory when performing security reviews.
+The agent automatically loads all `.yml` and `.yaml` files from the configured directory when performing security
+reviews.
 
 ## Complete Rule File Structure
 
@@ -242,6 +248,7 @@ tags:
 **Purpose**: Explain what the rule checks, why it matters, and relevant context
 
 **Best Practice**: Include:
+
 - What is being checked
 - Why it's a security concern
 - What makes code vulnerable
@@ -252,6 +259,7 @@ tags:
 **Values**: `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFORMATIONAL`
 
 **Guidelines**:
+
 - **CRITICAL**: Allows immediate system compromise, data breach, or critical compliance violation
 - **HIGH**: Significant security weakness exploitable with moderate effort
 - **MEDIUM**: Issues requiring specific conditions or having limited impact
@@ -271,6 +279,7 @@ tags:
 **Required**: At least one detection method
 
 **Methods**:
+
 1. **Regex Patterns**: Most flexible, matches code patterns
 2. **Exact Strings**: Fast matching for specific strings
 3. **Function Calls**: Identifies specific function usage
@@ -282,6 +291,7 @@ tags:
 **Purpose**: Defines which files the rule applies to
 
 **Required Subfields**:
+
 - `file_patterns`: Glob patterns for file matching
 - `languages`: Programming languages the rule applies to
 
@@ -290,6 +300,7 @@ tags:
 **Purpose**: Tells developers how to fix violations
 
 **Required Subfields**:
+
 - `description`: Overall remediation approach
 - `steps`: Specific actions to take
 - `code_examples`: Insecure and secure code examples
@@ -317,6 +328,7 @@ Maps rules to specific compliance requirements
 **Why Important**: Automatically populates compliance sections of reports
 
 **Example**:
+
 ```yaml
 compliance:
   - framework: PCI_DSS
@@ -334,6 +346,7 @@ Validates that rules work as intended
 **Best Practice**: Include both positive (should trigger) and negative (shouldn't trigger) test cases
 
 **Example**:
+
 ```yaml
 test_cases:
   - should_trigger: true
@@ -354,6 +367,7 @@ test_cases:
 Most flexible detection method. Matches code patterns using regular expressions.
 
 **Fields**:
+
 - `pattern`: Regular expression (ripgrep syntax)
 - `description`: What this pattern detects
 - `confidence`: 0.0-1.0 (how likely findings are true positives)
@@ -380,6 +394,7 @@ Most flexible detection method. Matches code patterns using regular expressions.
 ```
 
 **Tips**:
+
 - Use `\b` for word boundaries to avoid partial matches
 - Escape special regex characters: `\.`, `\(`, `\)`, `\[`, `\]`, `\{`, `\}`, etc.
 - Test patterns thoroughly with various code styles
@@ -563,6 +578,7 @@ cursor.execute(query, (username,))
 ```
 
 **Best Practices**:
+
 - Include comments explaining why secure code is secure
 - Show real, runnable code, not pseudocode
 - Include imports and context if needed
@@ -880,4 +896,5 @@ scope:
 6. Refine based on false positives/negatives
 7. Share effective rules with your team
 
-Custom rules make the Security Code Review Agent truly yours. Start small, iterate, and build a comprehensive set of rules that protect your unique codebase.
+Custom rules make the Security Code Review Agent truly yours. Start small, iterate, and build a comprehensive set of
+rules that protect your unique codebase.

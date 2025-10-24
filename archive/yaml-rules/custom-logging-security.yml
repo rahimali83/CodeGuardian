@@ -62,24 +62,24 @@ detection:
       language: python
 
     # Log injection vulnerabilities
-    - pattern: '(log|logger)\.(info|debug|warn|error)\(["\'][^"\']*\{\}[^"\']*["\']\s*\.\s*format\([^)]*request'
+    - pattern: '(log|logger)\.(info|debug|warn|error)\(["\' ][ ^"\' ]*\{ \ }[ ^"\' ]*[ "\']\s*\.\s*format\([^)]*request'
       description: "Potential log injection via string formatting with user input"
       confidence: 0.7
-      language: python
+        language: python
 
-    - pattern: 'logger\.(info|debug|warn|error)\(`.*\${.*request.*}.*`\)'
-      description: "Potential log injection via template literals with user input"
-      confidence: 0.7
-      language: javascript
+        - pattern: 'logger\.(info|debug|warn|error)\(`.*\${.*request.*}.*`\)'
+          description: "Potential log injection via template literals with user input"
+          confidence: 0.7
+          language: javascript
 
-    # Production console.log (should use proper logging)
-    - pattern: 'console\.(log|info|debug|warn|error)\('
-      description: "console.log in production code (should use proper logger)"
-      confidence: 0.5
-      language: javascript
+        # Production console.log (should use proper logging)
+        - pattern: 'console\.(log|info|debug|warn|error)\('
+          description: "console.log in production code (should use proper logger)"
+          confidence: 0.5
+          language: javascript
 
-    # Logging to files without rotation/protection
-    - pattern: 'FileHandler\([^)]*mode\s*=\s*["\']w["\']\)'
+        # Logging to files without rotation/protection
+        - pattern: 'FileHandler\([^)]*mode\s*=\s*["\' ]w["\']\)'
       description: "Log file opened in write mode (overwrites, no append)"
       confidence: 0.6
       language: python

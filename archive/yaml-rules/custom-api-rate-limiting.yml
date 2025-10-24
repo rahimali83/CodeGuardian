@@ -34,29 +34,29 @@ compliance:
 detection:
   # Python Flask routes without rate limiting
   patterns:
-    - pattern: '@app\.route\(["\']/(api|v\d+)/'
+    - pattern: '@app\.route\(["\' ]/(api|v\d+)/'
       description: "Flask API route definition"
       confidence: 0.5
       language: python
 
-    - pattern: '@router\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+    - pattern: '@router\.(get|post|put|delete|patch)\(["\' ]/(api|v\d+)/'
       description: "FastAPI route definition"
       confidence: 0.5
       language: python
 
     # Express.js routes without rate limiting
-    - pattern: 'app\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+    - pattern: 'app\.(get|post|put|delete|patch)\(["\' ]/(api|v\d+)/'
       description: "Express.js API route definition"
       confidence: 0.5
       language: javascript
 
-    - pattern: 'router\.(get|post|put|delete|patch)\(["\']/(api|v\d+)/'
+    - pattern: 'router\.(get|post|put|delete|patch)\(["\' ]/(api|v\d+)/'
       description: "Express.js router definition"
       confidence: 0.5
       language: javascript
 
     # Spring Boot without rate limiting
-    - pattern: '@(GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping|RequestMapping)\(["\']/(api|v\d+)/'
+    - pattern: '@(GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping|RequestMapping)\(["\' ]/(api|v\d+)/'
       description: "Spring Boot API endpoint"
       confidence: 0.5
       language: java

@@ -7,17 +7,21 @@ This document provides a complete index of all security rules available to the C
 Rules are organized into two categories:
 
 ### 1. Core Security Rules (Level 0-1)
+
 Foundational security principles and detection patterns from `rules/rules/codeguard-0-*.md` and `codeguard-1-*.md`
 
 ### 2. Comprehensive Detection Rules (Level 2)
+
 Detailed vulnerability detection patterns with code examples from `rules/rules/codeguard-2-*.md`
 
 ## Complete Rules Catalog
 
 ### Authentication & Identity (codeguard-0-authentication-mfa.md)
+
 **When to apply**: All authentication flows, login systems, password handling, MFA implementation
 
 **Covers**:
+
 - Password policies and validation (minimum 8 characters, breached password checking)
 - Password storage (Argon2id, bcrypt, scrypt with proper parameters)
 - Multi-factor authentication (WebAuthn/FIDO2, TOTP, backup codes)
@@ -33,9 +37,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Authorization & Access Control (codeguard-0-authorization-access-control.md)
+
 **When to apply**: All data access operations, API endpoints, resource ownership checks
 
 **Covers**:
+
 - Deny by default principle
 - RBAC/ABAC/ReBAC patterns
 - IDOR (Insecure Direct Object Reference) prevention
@@ -50,9 +56,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Input Validation & Injection Defense (codeguard-0-input-validation-injection.md)
+
 **When to apply**: All input handling, database queries, command execution, template rendering
 
 **Covers**:
+
 - SQL injection prevention (100% parameterization requirement)
 - LDAP injection (DN and filter escaping)
 - OS command injection (structured execution, no shell invocation)
@@ -66,9 +74,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### API & Web Services Security (codeguard-0-api-web-services.md)
+
 **When to apply**: REST APIs, GraphQL, SOAP/WS, microservices
 
 **Covers**:
+
 - Transport security (HTTPS, mTLS)
 - Authentication patterns (OAuth2/OIDC, service tokens)
 - Schema validation (OpenAPI, JSON Schema, GraphQL SDL, XSD)
@@ -83,9 +93,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Client-Side Web Security (codeguard-0-client-side-web-security.md)
+
 **When to apply**: Frontend code, JavaScript, HTML templates
 
 **Covers**:
+
 - XSS prevention (context-aware encoding, textContent usage)
 - DOM-based XSS (dangerous sinks: innerHTML, eval, document.write)
 - Content Security Policy (nonce-based, hash-based, Trusted Types)
@@ -101,9 +113,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Data Storage & Database Security (codeguard-0-data-storage.md)
+
 **When to apply**: Database configurations, connection handling, data access
 
 **Covers**:
+
 - Database isolation (network restrictions, localhost binding)
 - TLS for database connections (TLS 1.2+, certificate validation)
 - Authentication and credential storage (no hardcoded passwords, secrets management)
@@ -117,9 +131,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### File Handling & Upload Security (codeguard-0-file-handling-and-uploads.md)
+
 **When to apply**: File upload endpoints, file processing, file storage
 
 **Covers**:
+
 - Extension validation (allowlist approach, double extension checks)
 - Content type validation (magic number verification, not trusting headers)
 - Filename sanitization (random generation, alphanumeric restriction)
@@ -134,9 +150,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Session Management & Cookies (codeguard-0-session-management-and-cookies.md)
+
 **When to apply**: Session handling, cookie configuration, authentication flows
 
 **Covers**:
+
 - Session ID generation (CSPRNG, ≥128 bits entropy)
 - Cookie security flags (Secure, HttpOnly, SameSite=Strict/Lax)
 - Session regeneration (on auth, privilege changes)
@@ -150,9 +168,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Logging & Monitoring (codeguard-0-logging.md)
+
 **When to apply**: All logging implementations, security event tracking
 
 **Covers**:
+
 - Structured logging (JSON format, stable fields)
 - Sensitive data redaction (passwords, tokens, PII)
 - Log injection prevention (CR/LF stripping)
@@ -166,9 +186,11 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Cryptographic Algorithms (codeguard-1-crypto-algorithms.md)
+
 **When to apply**: Always - cryptographic algorithm selection
 
 **Covers**:
+
 - **BANNED algorithms**: MD2, MD4, MD5, SHA-0, RC2, RC4, Blowfish, DES, 3DES
 - **DEPRECATED**: SHA-1, AES-CBC, AES-ECB, RSA PKCS#1 v1.5, DHE with weak primes
 - **REQUIRED**: SHA-256+, AES-GCM, ChaCha20, RSA OAEP, ECDHE
@@ -180,17 +202,19 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Hardcoded Credentials (codeguard-1-hardcoded-credentials.md)
+
 **When to apply**: Always - scan all files
 
 **Covers**:
+
 - Recognition patterns for various secret types:
-  - AWS keys (AKIA, AGPA, AIDA, AROA prefixes)
-  - Stripe keys (sk_live_, pk_live_)
-  - Google API keys (AIza pattern)
-  - GitHub tokens (ghp_, gho_, ghu_, ghs_, ghr_)
-  - JWT tokens (eyJ pattern)
-  - Private key blocks (-----BEGIN...PRIVATE KEY-----)
-  - Connection strings with credentials
+    - AWS keys (AKIA, AGPA, AIDA, AROA prefixes)
+    - Stripe keys (sk_live_, pk_live_)
+    - Google API keys (AIza pattern)
+    - GitHub tokens (ghp_, gho_, ghu_, ghs_, ghr_)
+    - JWT tokens (eyJ pattern)
+    - Private key blocks (-----BEGIN...PRIVATE KEY-----)
+    - Connection strings with credentials
 - Variable name patterns (password, secret, key, token, auth)
 - Base64 encoded strings near authentication code
 
@@ -199,15 +223,17 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Comprehensive Secrets Detection (codeguard-2-secrets-detection.md)
+
 **When to apply**: Always - primary secrets scanning rule
 
 **Covers**:
+
 - **All secret types** with detailed detection patterns and confidence scoring:
-  - Hardcoded passwords (connection strings, MySQL, PostgreSQL, MongoDB)
-  - AWS credentials (Access Key ID, Secret Access Key, Session Tokens)
-  - Third-party API keys (Stripe, Google, GitHub, generic patterns)
-  - Private keys and certificates (RSA, DSA, EC, OpenSSH, PGP/GPG)
-  - Bearer tokens in code
+    - Hardcoded passwords (connection strings, MySQL, PostgreSQL, MongoDB)
+    - AWS credentials (Access Key ID, Secret Access Key, Session Tokens)
+    - Third-party API keys (Stripe, Google, GitHub, generic patterns)
+    - Private keys and certificates (RSA, DSA, EC, OpenSSH, PGP/GPG)
+    - Bearer tokens in code
 - Compliance mapping (PCI DSS 8.2.1, SOC 2 CC6.1, HIPAA 164.312)
 - Detailed remediation with environment variables, secret management systems
 - False positive indicators
@@ -218,24 +244,26 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Comprehensive Injection Vulnerabilities (codeguard-2-injection-vulnerabilities.md)
+
 **When to apply**: All input handling, query construction, command execution
 
 **Covers**:
+
 - **SQL Injection** with language-specific patterns:
-  - Python: f-strings, .format(), % formatting in execute()
-  - Java: Statement with concatenation vs PreparedStatement
-  - JavaScript: template literals in queries
-  - PHP: mysqli with concatenation vs prepared statements
+    - Python: f-strings, .format(), % formatting in execute()
+    - Java: Statement with concatenation vs PreparedStatement
+    - JavaScript: template literals in queries
+    - PHP: mysqli with concatenation vs prepared statements
 - **OS Command Injection**:
-  - Python: os.system, subprocess with shell=True
-  - JavaScript: exec with user input
-  - Java: Runtime.exec with concatenation
-  - PHP: shell_exec, system, exec with variables
+    - Python: os.system, subprocess with shell=True
+    - JavaScript: exec with user input
+    - Java: Runtime.exec with concatenation
+    - PHP: shell_exec, system, exec with variables
 - **Cross-Site Scripting (XSS)**:
-  - DOM-based XSS dangerous sinks (innerHTML, outerHTML, document.write, eval)
-  - React dangerouslySetInnerHTML
-  - jQuery .html()
-  - Server-side template XSS
+    - DOM-based XSS dangerous sinks (innerHTML, outerHTML, document.write, eval)
+    - React dangerouslySetInnerHTML
+    - jQuery .html()
+    - Server-side template XSS
 - Defense-in-depth strategy with code examples
 
 **Languages**: Python, JavaScript, TypeScript, Java, PHP, Ruby, Go
@@ -243,21 +271,23 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ---
 
 ### Comprehensive Cryptography Security (codeguard-2-cryptography-security.md)
+
 **When to apply**: All cryptographic operations, password hashing, random generation
 
 **Covers**:
+
 - **Weak hash algorithms** with specific detection:
-  - Python: hashlib.md5(), hashlib.sha1()
-  - Java: MessageDigest.getInstance("MD5"|"SHA-1")
-  - JavaScript: crypto.createHash('md5'|'sha1')
+    - Python: hashlib.md5(), hashlib.sha1()
+    - Java: MessageDigest.getInstance("MD5"|"SHA-1")
+    - JavaScript: crypto.createHash('md5'|'sha1')
 - **Password hashing failures** (CRITICAL):
-  - Fast hashes (SHA-256) used for passwords
-  - Required: bcrypt (cost 12+), Argon2id, scrypt, PBKDF2 (600k+ iterations)
-  - Language-specific secure implementations
+    - Fast hashes (SHA-256) used for passwords
+    - Required: bcrypt (cost 12+), Argon2id, scrypt, PBKDF2 (600k+ iterations)
+    - Language-specific secure implementations
 - **Insecure random number generation**:
-  - Python: random module vs secrets module
-  - JavaScript: Math.random() vs crypto.randomBytes()
-  - Java: Random vs SecureRandom
+    - Python: random module vs secrets module
+    - JavaScript: Math.random() vs crypto.randomBytes()
+    - Java: Random vs SecureRandom
 - **Deprecated OpenSSL APIs** (C/C++)
 
 **Languages**: Python, JavaScript, TypeScript, Java, PHP, C, Go
@@ -266,7 +296,8 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 
 ### Additional Security Domains (codeguard-0-*.md files)
 
-- **Additional Cryptography** (codeguard-0-additional-cryptography.md): Key management, certificate handling, TLS configuration
+- **Additional Cryptography** (codeguard-0-additional-cryptography.md): Key management, certificate handling, TLS
+  configuration
 - **Cloud & Kubernetes** (codeguard-0-cloud-orchestration-kubernetes.md): Pod security, RBAC, network policies
 - **DevOps & CI/CD** (codeguard-0-devops-ci-cd-containers.md): Container security, secrets in pipelines
 - **Digital Certificates** (codeguard-1-digital-certificates.md): Certificate validation, pinning
@@ -285,6 +316,7 @@ Detailed vulnerability detection patterns with code examples from `rules/rules/c
 ### For Security Code Review Agent
 
 The agent should:
+
 1. Load ALL rules at initialization
 2. Apply `alwaysApply: true` rules to every file
 3. Apply language-specific rules based on file extension
@@ -295,6 +327,7 @@ The agent should:
 ### For Developers
 
 Reference these rules when:
+
 - Writing new code (proactive security)
 - Reviewing pull requests
 - Investigating security findings
@@ -303,6 +336,7 @@ Reference these rules when:
 ### Finding a Specific Rule
 
 **By Vulnerability Type:**
+
 - Secrets/Credentials → codeguard-1-hardcoded-credentials.md, codeguard-2-secrets-detection.md
 - SQL Injection → codeguard-0-input-validation-injection.md, codeguard-2-injection-vulnerabilities.md
 - Weak Crypto → codeguard-1-crypto-algorithms.md, codeguard-2-cryptography-security.md
@@ -311,6 +345,7 @@ Reference these rules when:
 - SSRF → codeguard-0-api-web-services.md
 
 **By Technology:**
+
 - APIs → codeguard-0-api-web-services.md
 - Databases → codeguard-0-data-storage.md, codeguard-2-injection-vulnerabilities.md
 - Frontend → codeguard-0-client-side-web-security.md
@@ -319,6 +354,7 @@ Reference these rules when:
 - Mobile → codeguard-0-mobile-apps.md
 
 **By Compliance:**
+
 - PCI DSS → Rules with PCI_DSS tags (secrets, injection, encryption)
 - SOC 2 → Rules with SOC2 tags (access control, logging)
 - HIPAA → Rules with HIPAA tags (encryption, access control)
@@ -327,12 +363,14 @@ Reference these rules when:
 ## Rule Priority
 
 ### CRITICAL (Always Flag)
+
 - Hardcoded secrets and credentials
 - SQL injection with string concatenation
 - Fast hashes for password storage
 - Private keys in code
 
 ### HIGH (Flag in Production Code)
+
 - Command injection vulnerabilities
 - Weak cryptographic algorithms (MD5, SHA-1)
 - XSS vulnerabilities
@@ -340,6 +378,7 @@ Reference these rules when:
 - Path traversal
 
 ### MEDIUM (Flag with Context)
+
 - Insecure random number generation
 - Missing rate limiting
 - Debug mode enabled
@@ -349,16 +388,19 @@ Reference these rules when:
 
 - **Total Rule Files**: 25 (18 Level 0 + 4 Level 1 + 3 Level 2)
 - **Total Lines of Security Guidance**: 3,186+ lines
-- **Languages Covered**: 15+ (Python, JavaScript, TypeScript, Java, PHP, Ruby, Go, C, Kotlin, Swift, Shell, PowerShell, SQL, HTML, YAML, XML, Perl, Matlab)
+- **Languages Covered**: 15+ (Python, JavaScript, TypeScript, Java, PHP, Ruby, Go, C, Kotlin, Swift, Shell, PowerShell,
+  SQL, HTML, YAML, XML, Perl, Matlab)
 - **CWE Mappings**: 30+
 - **OWASP Top 10 Coverage**: Complete (all 10 categories)
 - **Compliance Frameworks**: 6 (PCI DSS, SOC 2, HIPAA, GDPR, CCPA, NIST CSF)
 - **Code Examples**: 100+ (insecure and secure variants)
-- **Security Domains**: 21+ (Authentication, Authorization, Injection, Cryptography, API Security, Cloud Security, Mobile Security, and more)
+- **Security Domains**: 21+ (Authentication, Authorization, Injection, Cryptography, API Security, Cloud Security,
+  Mobile Security, and more)
 
 ## Updating Rules
 
 To add a new rule:
+
 1. Create `rules/rules/codeguard-X-rule-name.md` where X is the level (0, 1, or 2)
 2. Add frontmatter with `description`, `languages`, and `alwaysApply` fields
 3. Include detection patterns, code examples (insecure and secure), and remediation guidance

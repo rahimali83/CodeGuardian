@@ -10,14 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Core Features
+
 - **Comprehensive Security Analysis Engine**: Detects vulnerabilities based on OWASP Top 10 and CWE standards
-- **Multi-Framework Compliance Checking**: Support for PCI DSS, SOC 2, PIPEDA, CCPA, HIPAA, and NIST Cybersecurity Framework
+- **Multi-Framework Compliance Checking**: Support for PCI DSS, SOC 2, PIPEDA, CCPA, HIPAA, and NIST Cybersecurity
+  Framework
 - **Vulnerability Tracking**: Track remediation progress across multiple review iterations
 - **Custom Rules Support**: Load and apply organization-specific security rules
-- **API Security Analysis**: Comprehensive analysis of API endpoints, authentication, authorization, and data connectivity
+- **API Security Analysis**: Comprehensive analysis of API endpoints, authentication, authorization, and data
+  connectivity
 - **Secrets Detection**: Identify hardcoded credentials, API keys, tokens, and sensitive data exposure
 
 #### Built-in Security Rules (17 rules)
+
 - SQL Injection detection (string concatenation in queries)
 - Command Injection detection (unsafe system command execution)
 - Cross-Site Scripting (XSS) detection (unescaped output)
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dangerous imports detection
 
 #### Compliance Framework Support
+
 - **PCI DSS**: Requirements 3, 4, 6, 7, 8, 10 coverage
 - **SOC 2**: All five trust service principles (Security, Availability, Processing Integrity, Confidentiality, Privacy)
 - **PIPEDA**: All 10 fair information principles
@@ -45,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **HIPAA**: Technical safeguards and PHI protection
 
 #### Documentation
+
 - Comprehensive agent definition with usage instructions
 - Complete custom rules guide with examples
 - Detailed compliance frameworks documentation
@@ -53,17 +59,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standardized report template
 
 #### Example Custom Rules
+
 - AWS Credentials detection rule
 - Database Connection Security rule
 - API Rate Limiting rule
 - Logging Security rule
 
 #### Example Code
+
 - Sample vulnerable code demonstrating SQL injection
 - Sample vulnerable code demonstrating XSS
 - Sample vulnerable code demonstrating hardcoded secrets
 
 #### Integration Support
+
 - Pre-commit hook examples
 - GitHub Actions workflow
 - GitLab CI configuration
@@ -71,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CircleCI configuration
 
 ### Configuration Options
+
 - Scope configuration (include/exclude patterns)
 - Custom rules directory specification
 - Compliance framework enablement
@@ -81,15 +91,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance tuning options
 
 ### Report Features
+
 - Executive summary with security rating
 - Previous vulnerability status tracking (fixed, not fixed, regressed)
 - Detailed vulnerability findings with:
-  - Description and location
-  - Risk analysis and impact
-  - Attack vectors
-  - Vulnerable code snippets
-  - Remediation guidance with code examples
-  - CWE, OWASP, and compliance mappings
+    - Description and location
+    - Risk analysis and impact
+    - Attack vectors
+    - Vulnerable code snippets
+    - Remediation guidance with code examples
+    - CWE, OWASP, and compliance mappings
 - Compliance analysis sections for each framework
 - API security assessment
 - Security management evaluation
@@ -97,6 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Metrics and trends
 
 ### Supported Languages
+
 - Python
 - JavaScript
 - TypeScript
@@ -115,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned Features
+
 - Interactive remediation assistance
 - Automated fix suggestions
 - Integration with issue tracking systems

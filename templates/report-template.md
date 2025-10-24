@@ -25,25 +25,25 @@
 
 ### Findings Summary
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | [N] | [% Change from previous] |
-| High | [N] | [% Change from previous] |
-| Medium | [N] | [% Change from previous] |
-| Low | [N] | [% Change from previous] |
-| Informational | [N] | [% Change from previous] |
-| **Total** | **[N]** | **[Net change]** |
+| Severity      | Count   | Status                   |
+|---------------|---------|--------------------------|
+| Critical      | [N]     | [% Change from previous] |
+| High          | [N]     | [% Change from previous] |
+| Medium        | [N]     | [% Change from previous] |
+| Low           | [N]     | [% Change from previous] |
+| Informational | [N]     | [% Change from previous] |
+| **Total**     | **[N]** | **[Net change]**         |
 
 ### Compliance Status
 
-| Framework | Status | Critical Issues | Notes |
-|-----------|--------|----------------|-------|
-| PCI DSS | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
-| SOC 2 | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
-| PIPEDA | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
-| CCPA | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
-| HIPAA | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
-| NIST CSF | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N] | [Brief note] |
+| Framework | Status                                      | Critical Issues | Notes        |
+|-----------|---------------------------------------------|-----------------|--------------|
+| PCI DSS   | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
+| SOC 2     | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
+| PIPEDA    | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
+| CCPA      | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
+| HIPAA     | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
+| NIST CSF  | [COMPLIANT / NON-COMPLIANT / PARTIAL / N/A] | [N]             | [Brief note] |
 
 ### Top Critical Issues
 
@@ -54,17 +54,21 @@
 ### Remediation Priority Roadmap
 
 **Immediate Action Required (24-48 hours)**:
+
 - [Critical issue requiring immediate attention]
 - [Critical issue requiring immediate attention]
 
 **Short-Term (1-2 weeks)**:
+
 - [High priority issues]
 - [High priority issues]
 
 **Medium-Term (1 month)**:
+
 - [Medium priority issues]
 
 **Long-Term (3 months)**:
+
 - [Low priority and process improvements]
 
 ---
@@ -79,17 +83,18 @@
 
 **Status Breakdown**:
 
-| Status | Count | Percentage |
-|--------|-------|------------|
-| ✅ Fixed | [N] | [XX]% |
-| 🔄 Partially Fixed | [N] | [XX]% |
-| ❌ Not Fixed | [N] | [XX]% |
-| ⚠️ Regressed | [N] | [XX]% |
-| 🗑️ Code Removed | [N] | [XX]% |
+| Status             | Count | Percentage |
+|--------------------|-------|------------|
+| ✅ Fixed            | [N]   | [XX]%      |
+| 🔄 Partially Fixed | [N]   | [XX]%      |
+| ❌ Not Fixed        | [N]   | [XX]%      |
+| ⚠️ Regressed       | [N]   | [XX]%      |
+| 🗑️ Code Removed   | [N]   | [XX]%      |
 
 ### Detailed Vulnerability Tracking
 
-*Note: If no previous report exists, this section will state: "This is the first security review of this codebase. No previous vulnerabilities to track."*
+*Note: If no previous report exists, this section will state: "This is the first security review of this codebase. No
+previous vulnerabilities to track."*
 
 ---
 
@@ -98,12 +103,14 @@
 **Current Status**: [✅ FIXED | 🔄 PARTIALLY FIXED | ❌ NOT FIXED | ⚠️ REGRESSED | 🗑️ CODE REMOVED]
 
 **Original Finding**:
+
 - **Severity**: [Critical/High/Medium/Low]
 - **Category**: [Category]
 - **Location**: [File path:line numbers]
 - **Description**: [Original vulnerability description]
 
 **Status Analysis**:
+
 - **Days Open**: [N days since first reported]
 - **Current Assessment**: [Detailed explanation of current status]
 - **Code Changes**: [Description of what changed or didn't change]
@@ -121,7 +128,8 @@
 
 ## New Vulnerabilities Discovered
 
-*This section contains all security issues, compliance violations, and code quality concerns discovered in the current review that were not present in previous reports.*
+*This section contains all security issues, compliance violations, and code quality concerns discovered in the current
+review that were not present in previous reports.*
 
 ---
 
@@ -133,10 +141,12 @@
 **Status**: NEW
 
 **Compliance Impact**:
+
 - [Framework Name]: [Requirement violated]
 - [Framework Name]: [Requirement violated]
 
 **Location**:
+
 - **File**: [File path]
 - **Lines**: [Line numbers]
 - **Function/Method**: [Function or method name if applicable]
@@ -148,6 +158,7 @@
 **Risk Analysis**:
 
 **Potential Impact**:
+
 - Data at risk: [What data could be compromised]
 - Access implications: [What access could be gained]
 - Compliance penalties: [What compliance violations and potential penalties]
@@ -192,10 +203,12 @@
 ```
 
 **Additional Recommendations**:
+
 - [Additional security enhancement related to this vulnerability]
 - [Defense in depth recommendation]
 
 **References**:
+
 - [Link to relevant CVE if applicable]
 - [Link to CWE entry]
 - [Link to OWASP documentation]
@@ -228,12 +241,18 @@
 [Detailed analysis of cardholder data protection including encryption at rest, key management, masking of PANs, and storage restrictions]
 
 **Findings**:
+
 - [Specific finding with file reference if applicable]
 - [Specific finding with file reference if applicable]
 
 **Files Reviewed**:
-- [File path]: [Observation]
-- [File path]: [Observation]
+
+-
+
+[File path]: [Observation]
+-
+
+[File path]: [Observation]
 
 ---
 
@@ -245,11 +264,15 @@
 [Detailed analysis of cardholder data transmission security including TLS implementation, protocol versions, cipher suites]
 
 **Findings**:
+
 - [Specific finding with file reference]
 - [Specific finding with file reference]
 
 **Files Reviewed**:
-- [File path]: [Observation]
+
+-
+
+[File path]: [Observation]
 
 ---
 
@@ -261,6 +284,7 @@
 [Analysis of secure development practices, vulnerability management, and separation of environments]
 
 **Findings**:
+
 - [Reference to security vulnerabilities found that violate this requirement]
 
 ---
@@ -273,6 +297,7 @@
 [Analysis of access control implementation, least privilege, and need-to-know principles]
 
 **Findings**:
+
 - [Specific finding with file reference]
 
 ---
@@ -285,6 +310,7 @@
 [Analysis of authentication mechanisms, password policies, MFA implementation, unique user IDs]
 
 **Findings**:
+
 - [Specific finding with file reference]
 
 ---
@@ -297,6 +323,7 @@
 [Analysis of audit logging, log protection, and monitoring capabilities]
 
 **Findings**:
+
 - [Specific finding with file reference]
 
 ---
@@ -315,11 +342,15 @@
 [Analysis of security controls including access control, change management, monitoring, incident response]
 
 **Findings**:
+
 - [Specific finding]
 - [Specific finding]
 
 **Files Reviewed**:
-- [File path]: [Observation]
+
+-
+
+[File path]: [Observation]
 
 ---
 
@@ -331,6 +362,7 @@
 [Analysis of availability controls, monitoring, redundancy, disaster recovery]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -343,6 +375,7 @@
 [Analysis of data validation, error handling, transaction processing]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -355,6 +388,7 @@
 [Analysis of confidential data protection, encryption, access controls]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -367,6 +401,7 @@
 [Analysis of personal information handling, consent, data subject rights]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -385,6 +420,7 @@
 [Analysis of organizational accountability for personal information]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -397,6 +433,7 @@
 [Analysis of purpose identification for personal information collection]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -409,6 +446,7 @@
 [Analysis of consent mechanisms for personal information]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -421,6 +459,7 @@
 [Analysis of data minimization practices]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -433,6 +472,7 @@
 [Analysis of data use limitations, disclosure controls, retention policies]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -445,6 +485,7 @@
 [Analysis of data accuracy mechanisms]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -457,6 +498,7 @@
 [Analysis of security safeguards for personal information]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -469,6 +511,7 @@
 [Analysis of transparency about personal information practices]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -481,6 +524,7 @@
 [Analysis of data subject access capabilities]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -493,6 +537,7 @@
 [Analysis of complaint mechanisms]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -513,6 +558,7 @@
 [Analysis of asset management, risk assessment, governance]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -525,6 +571,7 @@
 [Analysis of access control, data security, protective technology]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -537,6 +584,7 @@
 [Analysis of security monitoring, anomaly detection, continuous monitoring]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -549,6 +597,7 @@
 [Analysis of incident response capabilities]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -561,6 +610,7 @@
 [Analysis of recovery planning and procedures]
 
 **Findings**:
+
 - [Specific finding]
 
 ---
@@ -575,11 +625,15 @@
 [Analysis of consumer rights implementation: right to know, right to delete, right to opt-out]
 
 **Findings**:
+
 - [Specific finding]
 - [Specific finding]
 
 **Files Reviewed**:
-- [File path]: [Observation]
+
+-
+
+[File path]: [Observation]
 
 ---
 
@@ -587,16 +641,21 @@
 
 **Overall Status**: [COMPLIANT | NON-COMPLIANT | PARTIAL COMPLIANCE | N/A]
 
-**Summary**: [Brief overview of HIPAA compliance status or "Not applicable - no Protected Health Information (PHI) identified"]
+**Summary
+**: [Brief overview of HIPAA compliance status or "Not applicable - no Protected Health Information (PHI) identified"]
 
 **Analysis**:
 [If applicable: Analysis of PHI protection including encryption, access controls, audit logging, automatic logoff, integrity controls, transmission security]
 
 **Findings**:
+
 - [Specific finding if PHI is handled]
 
 **Files Reviewed**:
-- [File path]: [Observation]
+
+-
+
+[File path]: [Observation]
 
 ---
 
@@ -608,10 +667,10 @@
 
 **Total Endpoints Identified**: [N]
 
-| Endpoint | Method | Authentication | Authorization | Rate Limiting | Issues Found |
-|----------|--------|----------------|---------------|---------------|--------------|
-| [/api/endpoint] | [GET/POST/etc] | [Type or NONE] | [Present/MISSING] | [Present/MISSING] | [N] |
-| [/api/endpoint] | [GET/POST/etc] | [Type or NONE] | [Present/MISSING] | [Present/MISSING] | [N] |
+| Endpoint        | Method         | Authentication | Authorization     | Rate Limiting     | Issues Found |
+|-----------------|----------------|----------------|-------------------|-------------------|--------------|
+| [/api/endpoint] | [GET/POST/etc] | [Type or NONE] | [Present/MISSING] | [Present/MISSING] | [N]          |
+| [/api/endpoint] | [GET/POST/etc] | [Type or NONE] | [Present/MISSING] | [Present/MISSING] | [N]          |
 
 ---
 
@@ -621,14 +680,17 @@
 [Detailed analysis of authentication mechanisms used across APIs]
 
 **Strengths**:
+
 - [Positive observation]
 - [Positive observation]
 
 **Weaknesses**:
+
 - [Security concern with file reference]
 - [Security concern with file reference]
 
 **Findings**:
+
 - [Reference to specific vulnerabilities found in authentication]
 
 ---
@@ -639,6 +701,7 @@
 [Analysis of how APIs enforce access controls and authorization]
 
 **Findings**:
+
 - [Specific authorization issue with file reference]
 - [Specific authorization issue with file reference]
 
@@ -651,20 +714,24 @@
 **Databases Identified**: [List of database types: PostgreSQL, MySQL, MongoDB, etc.]
 
 **Connection Security Analysis**:
+
 - [Analysis of connection string security]
 - [Analysis of credential storage]
 - [Analysis of connection encryption]
 
 **Query Security Analysis**:
+
 - [Analysis of SQL injection prevention]
 - [Analysis of parameterized queries usage]
 - [Analysis of ORM usage]
 
 **Access Control Analysis**:
+
 - [Analysis of database user privileges]
 - [Analysis of least privilege implementation]
 
 **Findings**:
+
 - [Specific database security issue with file reference]
 
 ---
@@ -674,18 +741,22 @@
 **External APIs Identified**: [List of external services: Payment gateways, third-party APIs, etc.]
 
 **Authentication Analysis**:
+
 - [How external APIs are authenticated]
 - [How credentials are stored]
 
 **Error Handling Analysis**:
+
 - [How errors from external APIs are handled]
 - [Whether failures are secure]
 
 **Data Validation Analysis**:
+
 - [Whether data from external APIs is validated]
 - [Trust assumptions]
 
 **Findings**:
+
 - [Specific external API security issue with file reference]
 
 ---
@@ -701,6 +772,7 @@
 **Endpoints without Rate Limiting**: [N/Total]
 
 **Findings**:
+
 - [Specific rate limiting gap with endpoint reference]
 
 ---
@@ -711,9 +783,11 @@
 [Analysis of input validation comprehensiveness across APIs]
 
 **Validation Strengths**:
+
 - [Positive observation]
 
 **Validation Gaps**:
+
 - [Missing validation with file reference]
 - [Missing validation with file reference]
 
@@ -725,6 +799,7 @@
 [Analysis of whether APIs expose excessive data beyond client needs]
 
 **Findings**:
+
 - [Over-fetching issue with endpoint reference]
 - [Sensitive field exposure with endpoint reference]
 
@@ -741,6 +816,7 @@
 **Hardcoded Secrets Discovered**: [N]
 
 **Locations**:
+
 - [File:line]: [Type of secret: password/API key/token]
 - [File:line]: [Type of secret]
 
@@ -751,6 +827,7 @@
 [Whether integration with HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, etc. is present]
 
 **Recommendations**:
+
 - [Specific recommendation for secrets management improvement]
 
 ---
@@ -761,10 +838,10 @@
 
 **Total Outdated**: [N]
 
-| Dependency | Current Version | Latest Version | Versions Behind | Risk Level |
-|------------|----------------|----------------|-----------------|------------|
-| [package-name] | [version] | [version] | [N] | [HIGH/MEDIUM/LOW] |
-| [package-name] | [version] | [version] | [N] | [HIGH/MEDIUM/LOW] |
+| Dependency     | Current Version | Latest Version | Versions Behind | Risk Level        |
+|----------------|-----------------|----------------|-----------------|-------------------|
+| [package-name] | [version]       | [version]      | [N]             | [HIGH/MEDIUM/LOW] |
+| [package-name] | [version]       | [version]      | [N]             | [HIGH/MEDIUM/LOW] |
 
 ---
 
@@ -772,10 +849,10 @@
 
 **Total Vulnerable**: [N]
 
-| Dependency | Version | CVE | Severity | CVSS Score | Fix Available |
-|------------|---------|-----|----------|------------|---------------|
-| [package] | [version] | [CVE-YYYY-NNNNN] | [CRITICAL/HIGH/MEDIUM/LOW] | [score] | [version] |
-| [package] | [version] | [CVE-YYYY-NNNNN] | [CRITICAL/HIGH/MEDIUM/LOW] | [score] | [version] |
+| Dependency | Version   | CVE              | Severity                   | CVSS Score | Fix Available |
+|------------|-----------|------------------|----------------------------|------------|---------------|
+| [package]  | [version] | [CVE-YYYY-NNNNN] | [CRITICAL/HIGH/MEDIUM/LOW] | [score]    | [version]     |
+| [package]  | [version] | [CVE-YYYY-NNNNN] | [CRITICAL/HIGH/MEDIUM/LOW] | [score]    | [version]     |
 
 ---
 
@@ -787,12 +864,14 @@
 [Assessment of dependency pinning practices and use of lock files]
 
 **Lock Files Present**:
+
 - [✅ / ❌] package-lock.json (npm)
 - [✅ / ❌] Pipfile.lock (Python)
 - [✅ / ❌] go.sum (Go)
 - [✅ / ❌] Gemfile.lock (Ruby)
 
 **Recommendations**:
+
 - [Dependency security recommendation]
 
 ---
@@ -807,12 +886,14 @@
 [Assessment of whether security settings are externalized vs hardcoded]
 
 **Configuration Methods Used**:
+
 - [✅ / ❌] Environment variables
 - [✅ / ❌] Configuration files
 - [✅ / ❌] Remote configuration service
 - [❌] Hardcoded in source
 
 **Findings**:
+
 - [Hardcoded configuration issue with file reference]
 
 ---
@@ -825,6 +906,7 @@
 [Assessment of default security settings in the application]
 
 **Findings**:
+
 - [Insecure default with file reference]
 
 ---
@@ -837,6 +919,7 @@
 [Whether configuration is validated at application startup]
 
 **Findings**:
+
 - [Configuration validation gap]
 
 ---
@@ -848,6 +931,7 @@
 **Status**: [COMPREHENSIVE | PARTIAL | INSUFFICIENT]
 
 **Events Logged**:
+
 - [✅ / ❌] Authentication attempts (success and failure)
 - [✅ / ❌] Authorization failures
 - [✅ / ❌] Input validation failures
@@ -858,6 +942,7 @@
 [Assessment of security event logging comprehensiveness]
 
 **Findings**:
+
 - [Logging gap with file reference]
 
 ---
@@ -870,9 +955,11 @@
 [Analysis of whether logs contain sensitive data]
 
 **Sensitive Data Logged**:
+
 - [File:line]: [Type of sensitive data being logged]
 
 **Recommendations**:
+
 - [Logging security recommendation]
 
 ---
@@ -885,6 +972,7 @@
 [Assessment of log security: access controls, integrity protection, tampering prevention]
 
 **Findings**:
+
 - [Log protection issue]
 
 ---
@@ -898,6 +986,7 @@
 **Assessment**: [EXCELLENT | GOOD | MODERATE | POOR]
 
 **Observations**:
+
 - [Observation about code readability affecting security review]
 - [Observation about code structure]
 
@@ -911,6 +1000,7 @@
 **Assessment**: [COMPREHENSIVE | ADEQUATE | INSUFFICIENT | MISSING]
 
 **Documentation Present**:
+
 - [✅ / ❌] Function/method docstrings
 - [✅ / ❌] Security architecture documentation
 - [✅ / ❌] Threat model
@@ -918,6 +1008,7 @@
 - [✅ / ❌] Deployment security documentation
 
 **Gaps Identified**:
+
 - [Documentation gap affecting security]
 
 ---
@@ -930,9 +1021,11 @@
 [Assessment of error handling approaches and security implications]
 
 **Findings**:
+
 - [Error handling security issue with file reference]
 
 **Recommendations**:
+
 - [Error handling improvement recommendation]
 
 ---
@@ -948,16 +1041,16 @@
 **Priority**: CRITICAL - Must be addressed immediately
 
 1. **[VULN-ID]: [Vulnerability Title]**
-   - **Why Urgent**: [Explanation of critical risk]
-   - **Action**: [Specific immediate action required]
-   - **Owner**: [Suggested owner: Security Team / Development Team]
-   - **Location**: [File:lines]
+    - **Why Urgent**: [Explanation of critical risk]
+    - **Action**: [Specific immediate action required]
+    - **Owner**: [Suggested owner: Security Team / Development Team]
+    - **Location**: [File:lines]
 
 2. **[VULN-ID]: [Vulnerability Title]**
-   - **Why Urgent**: [Explanation of critical risk]
-   - **Action**: [Specific immediate action required]
-   - **Owner**: [Suggested owner]
-   - **Location**: [File:lines]
+    - **Why Urgent**: [Explanation of critical risk]
+    - **Action**: [Specific immediate action required]
+    - **Owner**: [Suggested owner]
+    - **Location**: [File:lines]
 
 *[List all critical findings]*
 
@@ -968,16 +1061,16 @@
 **Priority**: HIGH - Should be addressed soon to reduce significant risk
 
 1. **[VULN-ID]: [Vulnerability Title]**
-   - **Risk**: [Explanation of risk]
-   - **Action**: [Remediation steps]
-   - **Owner**: [Suggested owner]
-   - **Location**: [File:lines]
+    - **Risk**: [Explanation of risk]
+    - **Action**: [Remediation steps]
+    - **Owner**: [Suggested owner]
+    - **Location**: [File:lines]
 
 2. **[VULN-ID]: [Vulnerability Title]**
-   - **Risk**: [Explanation of risk]
-   - **Action**: [Remediation steps]
-   - **Owner**: [Suggested owner]
-   - **Location**: [File:lines]
+    - **Risk**: [Explanation of risk]
+    - **Action**: [Remediation steps]
+    - **Owner**: [Suggested owner]
+    - **Location**: [File:lines]
 
 *[List all high priority findings]*
 
@@ -988,10 +1081,10 @@
 **Priority**: MEDIUM - Should be addressed to improve security posture
 
 1. **[VULN-ID]: [Vulnerability Title]**
-   - **Risk**: [Explanation of risk]
-   - **Action**: [Remediation steps]
-   - **Owner**: [Suggested owner]
-   - **Location**: [File:lines]
+    - **Risk**: [Explanation of risk]
+    - **Action**: [Remediation steps]
+    - **Owner**: [Suggested owner]
+    - **Location**: [File:lines]
 
 *[List all medium priority findings]*
 
@@ -1002,9 +1095,9 @@
 **Priority**: LOW - Should be addressed for defense in depth
 
 1. **[VULN-ID]: [Vulnerability Title]**
-   - **Improvement**: [Description]
-   - **Action**: [Remediation steps]
-   - **Owner**: [Suggested owner]
+    - **Improvement**: [Description]
+    - **Action**: [Remediation steps]
+    - **Owner**: [Suggested owner]
 
 *[List all low priority and informational findings]*
 
@@ -1015,34 +1108,34 @@
 **Recommended Process Changes**:
 
 1. **Implement Security Testing in CI/CD**
-   - Add this security review agent to your CI/CD pipeline
-   - Run on every pull request
-   - Block merges on critical findings
-   - [Specific implementation guidance]
+    - Add this security review agent to your CI/CD pipeline
+    - Run on every pull request
+    - Block merges on critical findings
+    - [Specific implementation guidance]
 
 2. **Add Dependency Vulnerability Scanning**
-   - Integrate tools like Snyk, Dependabot, or npm audit
-   - Scan on every build
-   - Monitor for new CVEs in production dependencies
-   - [Specific implementation guidance]
+    - Integrate tools like Snyk, Dependabot, or npm audit
+    - Scan on every build
+    - Monitor for new CVEs in production dependencies
+    - [Specific implementation guidance]
 
 3. **Establish Security Training Program**
-   - Train developers on secure coding practices
-   - Focus on top vulnerability types found: [list]
-   - Provide hands-on examples and exercises
-   - [Specific topics to cover]
+    - Train developers on secure coding practices
+    - Focus on top vulnerability types found: [list]
+    - Provide hands-on examples and exercises
+    - [Specific topics to cover]
 
 4. **Implement Secret Management System**
-   - Deploy HashiCorp Vault, AWS Secrets Manager, or equivalent
-   - Migrate all hardcoded secrets to secret management
-   - Implement secret rotation policies
-   - [Specific implementation guidance]
+    - Deploy HashiCorp Vault, AWS Secrets Manager, or equivalent
+    - Migrate all hardcoded secrets to secret management
+    - Implement secret rotation policies
+    - [Specific implementation guidance]
 
 5. **Establish Security Code Review Process**
-   - Require security review for sensitive code changes
-   - Create security champions within development team
-   - Document security review checklist
-   - [Specific process recommendations]
+    - Require security review for sensitive code changes
+    - Create security champions within development team
+    - Document security review checklist
+    - [Specific process recommendations]
 
 *[Additional process improvements based on findings]*
 
@@ -1064,6 +1157,7 @@
 **Vulnerability Density**: [N vulnerabilities per 1,000 LOC]
 
 **Vulnerability Distribution**:
+
 ```
 Critical: [N] (XX%)
 High:     [N] (XX%)
@@ -1074,19 +1168,20 @@ Info:     [N] (XX%)
 
 **Trend Analysis** *(if multiple reports available)*:
 
-| Metric | Current | Previous | Change |
-|--------|---------|----------|--------|
-| Total Vulnerabilities | [N] | [N] | [↑↓→] [X]% |
-| Critical | [N] | [N] | [↑↓→] [X]% |
-| High | [N] | [N] | [↑↓→] [X]% |
-| Medium | [N] | [N] | [↑↓→] [X]% |
-| Low | [N] | [N] | [↑↓→] [X]% |
+| Metric                | Current | Previous | Change     |
+|-----------------------|---------|----------|------------|
+| Total Vulnerabilities | [N]     | [N]      | [↑↓→] [X]% |
+| Critical              | [N]     | [N]      | [↑↓→] [X]% |
+| High                  | [N]     | [N]      | [↑↓→] [X]% |
+| Medium                | [N]     | [N]      | [↑↓→] [X]% |
+| Low                   | [N]     | [N]      | [↑↓→] [X]% |
 
 ---
 
 ### Remediation Metrics
 
 **Mean Time to Remediation** *(if historical data available)*:
+
 - Critical issues: [N days average]
 - High issues: [N days average]
 - Medium issues: [N days average]
@@ -1096,6 +1191,7 @@ Info:     [N] (XX%)
 *Percentage of vulnerabilities that are recurring issues or similar to previously fixed vulnerabilities*
 
 **Top Recurring Vulnerability Types**:
+
 1. [Vulnerability type]: [N occurrences]
 2. [Vulnerability type]: [N occurrences]
 3. [Vulnerability type]: [N occurrences]
@@ -1108,8 +1204,8 @@ Info:     [N] (XX%)
 
 *List of custom security rules loaded and applied during this review:*
 
-| Rule ID | Title | Severity | Category | Source File |
-|---------|-------|----------|----------|-------------|
+| Rule ID      | Title        | Severity   | Category   | Source File |
+|--------------|--------------|------------|------------|-------------|
 | [CUSTOM-001] | [Rule title] | [Severity] | [Category] | [File path] |
 | [CUSTOM-002] | [Rule title] | [Severity] | [Category] | [File path] |
 
@@ -1121,10 +1217,10 @@ Info:     [N] (XX%)
 
 *Complete list of files included in this security review:*
 
-| File Path | Language | Lines of Code | Findings |
-|-----------|----------|---------------|----------|
-| [path/to/file] | [Language] | [N] | [N] |
-| [path/to/file] | [Language] | [N] | [N] |
+| File Path      | Language   | Lines of Code | Findings |
+|----------------|------------|---------------|----------|
+| [path/to/file] | [Language] | [N]           | [N]      |
+| [path/to/file] | [Language] | [N]           | [N]      |
 
 **Total Files**: [N]
 **Total Lines of Code**: [N]
@@ -1135,8 +1231,8 @@ Info:     [N] (XX%)
 
 *Findings that were initially flagged but determined to be false positives or excluded:*
 
-| Finding | Reason for Exclusion | Location |
-|---------|---------------------|----------|
+| Finding               | Reason for Exclusion                          | Location     |
+|-----------------------|-----------------------------------------------|--------------|
 | [Finding description] | [Explanation of why this is a false positive] | [File:lines] |
 
 **Total Excluded**: [N]
@@ -1147,8 +1243,8 @@ Info:     [N] (XX%)
 
 *Files or code paths explicitly excluded from this review:*
 
-| Excluded Path | Reason |
-|---------------|--------|
+| Excluded Path  | Reason                                                        |
+|----------------|---------------------------------------------------------------|
 | [path/pattern] | [Reason: e.g., test files, third-party code, build artifacts] |
 
 ---
@@ -1168,7 +1264,8 @@ Info:     [N] (XX%)
 
 ## Confidentiality Notice
 
-This security review report contains confidential security information about the codebase. Distribution should be limited to authorized personnel only. Do not share this report outside the organization without proper authorization.
+This security review report contains confidential security information about the codebase. Distribution should be
+limited to authorized personnel only. Do not share this report outside the organization without proper authorization.
 
 ---
 

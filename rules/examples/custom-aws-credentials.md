@@ -18,13 +18,16 @@ owasp: "A07:2021 - Identification and Authentication Failures"
 
 ## Critical Principle: Never Commit AWS Credentials to Source Code
 
-AWS credentials (Access Key IDs, Secret Access Keys, Session Tokens) should **NEVER** be committed to version control. Hardcoded credentials can be discovered by anyone with repository access and lead to unauthorized access to your AWS resources, data breaches, and significant financial impact.
+AWS credentials (Access Key IDs, Secret Access Keys, Session Tokens) should **NEVER** be committed to version control.
+Hardcoded credentials can be discovered by anyone with repository access and lead to unauthorized access to your AWS
+resources, data breaches, and significant financial impact.
 
 ## Detection Patterns
 
 ### AWS Access Key ID Format
 
-AWS Access Key IDs follow a specific pattern: they always start with `AKIA` followed by 16 uppercase alphanumeric characters.
+AWS Access Key IDs follow a specific pattern: they always start with `AKIA` followed by 16 uppercase alphanumeric
+characters.
 
 **INSECURE - Flag as CRITICAL:**
 
@@ -74,13 +77,16 @@ AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 ### What to Look For
 
 **High confidence indicators (flag immediately):**
+
 - **AKIA pattern**: Any string matching `AKIA[0-9A-Z]{16}` (AWS Access Key ID format)
 - **Variable assignment**: `aws_access_key_id`, `AWS_ACCESS_KEY_ID`, `accessKeyId` assigned to AKIA string
-- **Secret key patterns**: `aws_secret_access_key`, `AWS_SECRET_ACCESS_KEY`, `secretAccessKey` assigned to 40-character base64-like string
+- **Secret key patterns**: `aws_secret_access_key`, `AWS_SECRET_ACCESS_KEY`, `secretAccessKey` assigned to 40-character
+  base64-like string
 - **Session tokens**: `aws_session_token`, `AWS_SESSION_TOKEN`, `sessionToken` assigned to 100+ character base64 string
 - **URL parameters**: `AWSAccessKeyId=` in URLs
 
 **Context to check:**
+
 - boto3.client() calls in Python with credential parameters
 - AWS.config.update() in JavaScript with credentials
 - BasicAWSCredentials constructor in Java
@@ -89,6 +95,7 @@ AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 ### False Positive Indicators
 
 **Lower severity or don't flag if:**
+
 - Contains words: `example`, `sample`, `dummy`, `placeholder`, `test`, `mock`, `fake`, `YOUR_ACCESS_KEY`
 - Exact match to AWS documentation example: `AKIAIOSFODNN7EXAMPLE`
 - In test files (unless production credentials accidentally in tests)
@@ -99,6 +106,7 @@ AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 ### Best Practice: Use IAM Roles (Preferred)
 
 **SECURE - Python with IAM role:**
+
 ```python
 import boto3
 
@@ -110,6 +118,7 @@ response = client.list_buckets()
 ```
 
 **SECURE - JavaScript with IAM role:**
+
 ```javascript
 const AWS = require('aws-sdk');
 
@@ -119,6 +128,7 @@ const s3 = new AWS.S3();
 ```
 
 **SECURE - Java with default credential chain:**
+
 ```java
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -132,6 +142,7 @@ AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 ### Alternative: Environment Variables (Local Development)
 
 **SECURE - Python with environment variables:**
+
 ```python
 import boto3
 import os
@@ -150,6 +161,7 @@ client = boto3.client('s3', region_name='us-east-1')
 ### Alternative: AWS Secrets Manager (Cross-Account Access)
 
 **SECURE - Python with Secrets Manager:**
+
 ```python
 import boto3
 import json
@@ -169,6 +181,7 @@ client = boto3.client(
 ```
 
 **SECURE - JavaScript with Secrets Manager:**
+
 ```javascript
 const AWS = require('aws-sdk');
 const secretsManager = new AWS.SecretsManager({ region: 'us-east-1' });
@@ -195,12 +208,13 @@ async function createS3Client() {
 
 If you find hardcoded AWS credentials in code:
 
-1. **IMMEDIATE - Revoke Credentials**: Go to AWS IAM Console and immediately deactivate or delete the exposed credentials
+1. **IMMEDIATE - Revoke Credentials**: Go to AWS IAM Console and immediately deactivate or delete the exposed
+   credentials
 2. **Remove from Code**: Delete the hardcoded credentials from source code
 3. **Choose Secure Method**:
-   - **Preferred**: Use IAM roles for EC2 instances, ECS tasks, Lambda functions, and other AWS services
-   - **Alternative**: Use AWS Secrets Manager or Systems Manager Parameter Store
-   - **Local Dev Only**: Use environment variables with credentials in `~/.aws/credentials` or exported vars
+    - **Preferred**: Use IAM roles for EC2 instances, ECS tasks, Lambda functions, and other AWS services
+    - **Alternative**: Use AWS Secrets Manager or Systems Manager Parameter Store
+    - **Local Dev Only**: Use environment variables with credentials in `~/.aws/credentials` or exported vars
 4. **Update .gitignore**: Add credential files to `.gitignore`:
    ```
    .env
@@ -209,7 +223,8 @@ If you find hardcoded AWS credentials in code:
    **/secrets.*
    ```
 5. **Scan Git History**: Use tools like `git-secrets` or `truffleHog` to scan commit history for exposed credentials
-6. **Rotate All Potentially Exposed Credentials**: If credentials were ever committed, consider them compromised and rotate
+6. **Rotate All Potentially Exposed Credentials**: If credentials were ever committed, consider them compromised and
+   rotate
 
 ## Best Practices
 
@@ -223,12 +238,16 @@ If you find hardcoded AWS credentials in code:
 ## Compliance Impact
 
 **PCI DSS 8.2.1**: Do not use vendor-supplied defaults for system passwords and other security parameters
+
 - Hardcoded credentials violate this requirement as they're essentially default credentials in code
 
-**SOC 2 CC6.1**: The entity implements logical access security software, infrastructure, and architectures over protected information assets
+**SOC 2 CC6.1**: The entity implements logical access security software, infrastructure, and architectures over
+protected information assets
+
 - Credentials must be properly managed, not hardcoded
 
 **NIST CSF PR.AC-1**: Identities and credentials are issued, managed, verified, revoked, and audited
+
 - Hardcoded credentials cannot be audited or revoked properly
 
 ## References
@@ -241,7 +260,9 @@ If you find hardcoded AWS credentials in code:
 
 ## Summary
 
-AWS credentials must never be hardcoded in source code. Always use IAM roles for AWS services, environment variables for local development, or AWS Secrets Manager for cross-account access. Any exposed credentials should be considered compromised and immediately rotated.
+AWS credentials must never be hardcoded in source code. Always use IAM roles for AWS services, environment variables for
+local development, or AWS Secrets Manager for cross-account access. Any exposed credentials should be considered
+compromised and immediately rotated.
 
 ---
 

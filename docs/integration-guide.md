@@ -2,7 +2,8 @@
 
 ## Overview
 
-This guide shows how to integrate the Security Code Review Agent into your development workflows for continuous security analysis.
+This guide shows how to integrate the Security Code Review Agent into your development workflows for continuous security
+analysis.
 
 ## Pre-Commit Hooks
 
@@ -32,6 +33,7 @@ exit 0
 ```
 
 Make it executable:
+
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
@@ -244,6 +246,7 @@ StandardError=append:/var/log/security-review.log
 ```
 
 Enable:
+
 ```bash
 sudo systemctl enable security-review.timer
 sudo systemctl start security-review.timer

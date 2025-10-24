@@ -30,11 +30,11 @@ rules:
 
     detection:
       patterns:
-        - pattern: '(password|passwd|pwd|pass)\s*[:=]\s*["\'][^"\']{6,}["\']'
+        - pattern: '(password|passwd|pwd|pass)\s*[:=]\s*["\' ][ ^"\' ]{ 6, }[ "\']'
           confidence: 0.85
           description: "Hardcoded password assignment"
 
-        - pattern: 'DB_PASSWORD\s*=\s*["\'][^"\']+["\']'
+            - pattern: 'DB_PASSWORD\s*=\s*["\' ][ ^"\' ]+["\']'
           confidence: 0.9
           description: "Database password in code"
 
@@ -108,202 +108,202 @@ rules:
 
     detection:
       patterns:
-        - pattern: '(aws_access_key_id|AWS_ACCESS_KEY_ID|accessKeyId)\s*[:=]\s*["\']AKIA[A-Z0-9]{16}["\']'
+        - pattern: '(aws_access_key_id|AWS_ACCESS_KEY_ID|accessKeyId)\s*[:=]\s*["\' ]AKIA[A-Z0-9]{16}["\']'
           confidence: 0.95
           description: "AWS Access Key ID (starts with AKIA)"
 
-        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\'][A-Za-z0-9/+=]{40}["\']'
+        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\' ][ A-Za-z0-9/+= ]{ 40 }[ "\']'
           confidence: 0.9
           description: "AWS Secret Access Key (40 characters)"
 
-        - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\'][A-Za-z0-9/+=]{100,}["\']'
+            - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\' ][ A-Za-z0-9/+= ]{ 100, }[ "\']'
           confidence: 0.9
           description: "AWS Session Token"
 
-        - pattern: 'AKIA[A-Z0-9]{16}'
-          confidence: 0.85
-          description: "AWS Access Key ID pattern anywhere"
+            - pattern: 'AKIA[A-Z0-9]{16}'
+                confidence: 0.85
+                description: "AWS Access Key ID pattern anywhere"
 
-    scope:
-      file_patterns:
-        - "**/*"
-      exclude:
-        - "**/node_modules/**"
-        - "**/vendor/**"
-        - "**/.git/**"
+                scope:
+                  file_patterns:
+                    - "**/*"
+                  exclude:
+                    - "**/node_modules/**"
+                    - "**/vendor/**"
+                    - "**/.git/**"
 
-    remediation:
-      description: |
-        Use AWS IAM roles, instance profiles, or AWS Secrets Manager. Never hardcode AWS credentials.
+                remediation:
+                  description: |
+                    Use AWS IAM roles, instance profiles, or AWS Secrets Manager. Never hardcode AWS credentials.
 
-      steps:
-        - "Remove AWS credentials from code immediately"
-        - "Rotate the exposed credentials in AWS IAM console"
-        - "Use IAM roles for EC2/Lambda/ECS"
-        - "Use AWS Secrets Manager or Parameter Store"
-        - "Configure AWS CLI profiles locally with credentials file"
+                  steps:
+                    - "Remove AWS credentials from code immediately"
+                    - "Rotate the exposed credentials in AWS IAM console"
+                    - "Use IAM roles for EC2/Lambda/ECS"
+                    - "Use AWS Secrets Manager or Parameter Store"
+                    - "Configure AWS CLI profiles locally with credentials file"
 
-      code_examples:
-        - language: python
-          insecure: |
-            # INSECURE - Hardcoded AWS credentials
-            AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-            AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                  code_examples:
+                    - language: python
+                      insecure: |
+                        # INSECURE - Hardcoded AWS credentials
+                        AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+                        AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 
-          secure: |
-            # SECURE - Use IAM role or environment variables
-            import boto3
-            # Automatically uses IAM role or environment variables
-            s3 = boto3.client('s3')
-            # Or explicitly from environment
-            import os
-            s3 = boto3.client('s3',
-                aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-                aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+                      secure: |
+                        # SECURE - Use IAM role or environment variables
+                        import boto3
+                        # Automatically uses IAM role or environment variables
+                        s3 = boto3.client('s3')
+                        # Or explicitly from environment
+                        import os
+                        s3 = boto3.client('s3',
+                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
 
-    references:
-      - "https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html"
+                references:
+                  - "https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html"
 
-  - rule_id: BUILTIN-CRED-003
-    title: "API Key Detection"
-    description: "Detects hardcoded API keys and tokens which must be managed securely"
-    severity: CRITICAL
-    category: secrets
-    cwe: CWE-798
+                - rule_id: BUILTIN-CRED-003
+                  title: "API Key Detection"
+                  description: "Detects hardcoded API keys and tokens which must be managed securely"
+                  severity: CRITICAL
+                  category: secrets
+                  cwe: CWE-798
 
-    detection:
-      patterns:
-        - pattern: '(api_key|apikey|api-key|apiKey|API_KEY)\s*[:=]\s*["\'][A-Za-z0-9]{20,}["\']'
+                  detection:
+                    patterns:
+                      - pattern: '(api_key|apikey|api-key|apiKey|API_KEY)\s*[:=]\s*["\' ][ A-Za-z0-9 ]{ 20, }[ "\']'
           confidence: 0.85
           description: "Generic API key pattern"
 
-        - pattern: '(secret|secret_key|secretKey|SECRET_KEY)\s*[:=]\s*["\'][^"\']{16,}["\']'
+            - pattern: '(secret|secret_key|secretKey|SECRET_KEY)\s*[:=]\s*["\' ][ ^"\' ]{ 16, }[ "\']'
           confidence: 0.8
           description: "Secret key pattern"
 
-        - pattern: '(token|auth_token|authToken|AUTH_TOKEN)\s*[:=]\s*["\'][A-Za-z0-9]{32,}["\']'
+            - pattern: '(token|auth_token|authToken|AUTH_TOKEN)\s*[:=]\s*["\' ][ A-Za-z0-9 ]{ 32, }[ "\']'
           confidence: 0.8
           description: "Authentication token pattern"
 
-        - pattern: 'Bearer\s+\w{20,}'
-          confidence: 0.85
-          description: "Bearer token in code"
+            - pattern: 'Bearer\s+\w{20,}'
+                confidence: 0.85
+                description: "Bearer token in code"
 
-        - pattern: 'sk_live_[A-Za-z0-9]{24,}'
-          confidence: 0.95
-          description: "Stripe live secret key"
+                - pattern: 'sk_live_[A-Za-z0-9]{24,}'
+                  confidence: 0.95
+                  description: "Stripe live secret key"
 
-        - pattern: 'pk_live_[A-Za-z0-9]{24,}'
-          confidence: 0.9
-          description: "Stripe live publishable key"
+                - pattern: 'pk_live_[A-Za-z0-9]{24,}'
+                  confidence: 0.9
+                  description: "Stripe live publishable key"
 
-        - pattern: 'AIza[A-Za-z0-9_-]{35}'
-          confidence: 0.95
-          description: "Google API key"
+                - pattern: 'AIza[A-Za-z0-9_-]{35}'
+                  confidence: 0.95
+                  description: "Google API key"
 
-        - pattern: 'ghp_[A-Za-z0-9]{36}'
-          confidence: 0.95
-          description: "GitHub personal access token"
+                - pattern: 'ghp_[A-Za-z0-9]{36}'
+                  confidence: 0.95
+                  description: "GitHub personal access token"
 
-        - pattern: 'gho_[A-Za-z0-9]{36}'
-          confidence: 0.95
-          description: "GitHub OAuth token"
+                - pattern: 'gho_[A-Za-z0-9]{36}'
+                  confidence: 0.95
+                  description: "GitHub OAuth token"
 
-    scope:
-      file_patterns:
-        - "**/*"
-      exclude:
-        - "**/test/**"
-        - "**/node_modules/**"
-        - "**/vendor/**"
+                scope:
+                  file_patterns:
+                    - "**/*"
+                  exclude:
+                    - "**/test/**"
+                    - "**/node_modules/**"
+                    - "**/vendor/**"
 
-    remediation:
-      description: |
-        Store API keys in environment variables or secret management systems. Never commit them to version control.
+                remediation:
+                  description: |
+                    Store API keys in environment variables or secret management systems. Never commit them to version control.
 
-      steps:
-        - "Remove API keys from source code"
-        - "Rotate all exposed keys immediately"
-        - "Use environment variables or secret management"
-        - "Implement key rotation policies"
-        - "Monitor API key usage for anomalies"
+                  steps:
+                    - "Remove API keys from source code"
+                    - "Rotate all exposed keys immediately"
+                    - "Use environment variables or secret management"
+                    - "Implement key rotation policies"
+                    - "Monitor API key usage for anomalies"
 
-    references:
-      - "https://owasp.org/www-project-api-security/"
+                references:
+                  - "https://owasp.org/www-project-api-security/"
 
-  - rule_id: BUILTIN-CRED-004
-    title: "Private Key Detection"
-    description: "Detects private keys and certificates in source code"
-    severity: CRITICAL
-    category: secrets
-    cwe: CWE-798
+                - rule_id: BUILTIN-CRED-004
+                  title: "Private Key Detection"
+                  description: "Detects private keys and certificates in source code"
+                  severity: CRITICAL
+                  category: secrets
+                  cwe: CWE-798
 
-    detection:
-      patterns:
-        - pattern: '-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----'
-          confidence: 0.99
-          description: "Private key block detected"
+                  detection:
+                    patterns:
+                      - pattern: '-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----'
+                        confidence: 0.99
+                        description: "Private key block detected"
 
-        - pattern: '-----BEGIN (PGP |GPG )?PRIVATE KEY BLOCK-----'
-          confidence: 0.99
-          description: "PGP/GPG private key"
+                      - pattern: '-----BEGIN (PGP |GPG )?PRIVATE KEY BLOCK-----'
+                        confidence: 0.99
+                        description: "PGP/GPG private key"
 
-        - pattern: '(private_key|privateKey|PRIVATE_KEY)\s*[:=]\s*["\'][A-Za-z0-9+/=\n\r]{100,}["\']'
+                      - pattern: '(private_key|privateKey|PRIVATE_KEY)\s*[:=]\s*["\' ][ A-Za-z0-9+/=\n\r ]{ 100, }[ "\']'
           confidence: 0.9
           description: "Private key variable"
 
-    scope:
-      file_patterns:
-        - "**/*"
-      exclude:
-        - "**/test/**"
-        - "**/*.pem.example"
-        - "**/*.key.example"
+          scope:
+            file_patterns:
+              - "**/*"
+            exclude:
+              - "**/test/**"
+              - "**/*.pem.example"
+              - "**/*.key.example"
 
-    remediation:
-      description: |
-        Never store private keys in source code. Use secure key management systems and hardware security modules (HSM) for production keys.
+            remediation:
+              description: |
+                Never store private keys in source code. Use secure key management systems and hardware security modules (HSM) for production keys.
 
-      steps:
-        - "Remove private keys from source code immediately"
-        - "Revoke and regenerate any exposed keys"
-        - "Use key management systems (KMS, HSM)"
-        - "Store keys in secure vaults (HashiCorp Vault, AWS KMS)"
-        - "Restrict key access to authorized systems only"
+              steps:
+                - "Remove private keys from source code immediately"
+                - "Revoke and regenerate any exposed keys"
+                - "Use key management systems (KMS, HSM)"
+                - "Store keys in secure vaults (HashiCorp Vault, AWS KMS)"
+                - "Restrict key access to authorized systems only"
 
-    references:
-      - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_cryptographic_key"
+            references:
+              - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_cryptographic_key"
 
-  # =============================================================================
-  # SQL INJECTION PREVENTION
-  # =============================================================================
+            # =============================================================================
+            # SQL INJECTION PREVENTION
+            # =============================================================================
 
-  - rule_id: BUILTIN-SQLI-001
-    title: "SQL Injection - String Concatenation"
-    description: "SQL query built using string concatenation with user input, vulnerable to SQL injection"
-    severity: CRITICAL
-    category: injection
-    cwe: CWE-89
-    owasp: "A03:2021 - Injection"
+            - rule_id: BUILTIN-SQLI-001
+              title: "SQL Injection - String Concatenation"
+              description: "SQL query built using string concatenation with user input, vulnerable to SQL injection"
+              severity: CRITICAL
+              category: injection
+              cwe: CWE-89
+              owasp: "A03:2021 - Injection"
 
-    compliance:
-      - framework: PCI_DSS
-        requirement: "6.5.1"
-        description: "Injection flaws, particularly SQL injection"
+              compliance:
+                - framework: PCI_DSS
+                  requirement: "6.5.1"
+                  description: "Injection flaws, particularly SQL injection"
 
-    detection:
-      patterns:
-        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*%s[^)]*%'
-          language: python
-          confidence: 0.8
-          description: "Python string formatting in SQL"
+              detection:
+                patterns:
+                  - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*%s[^)]*%'
+                    language: python
+                    confidence: 0.8
+                    description: "Python string formatting in SQL"
 
-        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*\.format\('
-          language: python
-          confidence: 0.9
-          description: "Python .format() in SQL"
+                  - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*\.format\('
+                    language: python
+                    confidence: 0.9
+                    description: "Python .format() in SQL"
 
-        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*f["\']'
+                  - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*f["\' ]'
           language: python
           confidence: 0.9
           description: "Python f-string in SQL"
@@ -405,7 +405,7 @@ rules:
           confidence: 0.85
           description: "Python subprocess with shell=True"
 
-        - pattern: 'exec\(["\'].*\$.*["\']'
+        - pattern: 'exec\(["\' ].*\$.*["\']'
           language: javascript
           confidence: 0.8
           description: "JavaScript exec with shell variables"
@@ -485,7 +485,7 @@ rules:
 
     detection:
       patterns:
-        - pattern: '\.innerHTML\s*=\s*[^"\']'
+        - pattern: '\.innerHTML\s*=\s*[^"\' ]'
           language: javascript
           confidence: 0.75
           description: "Direct innerHTML assignment"
@@ -578,22 +578,22 @@ rules:
           confidence: 0.8
           description: "Python MD5/SHA1 usage"
 
-        - pattern: 'MessageDigest\.getInstance\(["\']MD5["\']\)'
+        - pattern: 'MessageDigest\.getInstance\(["\' ]MD5["\']\)'
           language: java
           confidence: 0.9
           description: "Java MD5 MessageDigest"
 
-        - pattern: 'MessageDigest\.getInstance\(["\']SHA-1["\']\)'
+        - pattern: 'MessageDigest\.getInstance\(["\' ]SHA-1["\']\)'
           language: java
           confidence: 0.9
           description: "Java SHA1 MessageDigest"
 
-        - pattern: 'crypto\.createHash\(["\']md5["\']\)'
+        - pattern: 'crypto\.createHash\(["\' ]md5["\']\)'
           language: javascript
           confidence: 0.85
           description: "Node.js MD5 hash"
 
-        - pattern: 'crypto\.createHash\(["\']sha1["\']\)'
+        - pattern: 'crypto\.createHash\(["\' ]sha1["\']\)'
           language: javascript
           confidence: 0.85
           description: "Node.js SHA1 hash"
@@ -927,7 +927,7 @@ rules:
 
     detection:
       patterns:
-        - pattern: 'requests\.(get|post|put)\(["\']http://'
+        - pattern: 'requests\.(get|post|put)\(["\' ]http://'
           language: python
           confidence: 0.7
           description: "HTTP request in Python"
@@ -972,7 +972,7 @@ rules:
 
     detection:
       patterns:
-        - pattern: '@(app\.route|router\.post)\(["\']/(api|v1|v2)/.*(login|auth)'
+        - pattern: '@(app\.route|router\.post)\(["\' ]/(api|v1|v2)/.*(login|auth)'
           confidence: 0.6
           description: "Authentication API without explicit rate limit"
 

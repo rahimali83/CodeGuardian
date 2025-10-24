@@ -1,6 +1,7 @@
 # CodeGuardian - Security Code Review Agent
 
-> AI-powered security code review agent for Claude Code that uses natural language markdown rules to perform comprehensive, context-aware security analysis of codebases.
+> AI-powered security code review agent for Claude Code that uses natural language markdown rules to perform
+> comprehensive, context-aware security analysis of codebases.
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-org/codeguardian)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -10,9 +11,11 @@
 
 ### 🧠 Markdown-Based Natural Language Rules
 
-Unlike traditional security tools that rely on rigid regex patterns, CodeGuardian uses **markdown-based natural language security rules** that Claude agents can truly understand and reason about.
+Unlike traditional security tools that rely on rigid regex patterns, CodeGuardian uses **markdown-based natural language
+security rules** that Claude agents can truly understand and reason about.
 
 **Why this matters:**
+
 - ✅ **Context-aware detection** - Understands the difference between test code and production code
 - ✅ **Semantic understanding** - Finds vulnerabilities even when code patterns vary
 - ✅ **Lower false positives** - Can reason about whether something is actually vulnerable
@@ -43,6 +46,7 @@ Unlike traditional security tools that rely on rigid regex patterns, CodeGuardia
 ### 📋 Compliance Framework Support
 
 Built-in compliance checking for:
+
 - **PCI DSS** - Payment Card Industry Data Security Standard
 - **SOC 2** - Service Organization Control 2
 - **HIPAA** - Health Insurance Portability and Accountability Act
@@ -60,6 +64,7 @@ Built-in compliance checking for:
 ### 📝 Educational Findings
 
 Every finding includes:
+
 - Clear explanation of the vulnerability
 - Why it's dangerous and what could happen
 - Step-by-step remediation instructions
@@ -192,16 +197,19 @@ claude code security-review --compliance hipaa
 CodeGuardian's security rules are organized into three levels:
 
 **📘 Level 0**: Foundational Security Principles
+
 - Broad domain coverage (authentication, authorization, injection, APIs, cloud, mobile, etc.)
 - 18 comprehensive guidance documents (3,186+ total lines)
 - Covers secure design patterns and best practices across all major security domains
 
 **📗 Level 1**: Specific Vulnerability Classes
+
 - Focused detection for particular vulnerability types
 - 4 targeted detection rules
 - Examples: hardcoded credentials, crypto algorithms, digital certificates, safe C functions
 
 **📕 Level 2**: Comprehensive Detection Patterns
+
 - Detailed vulnerability detection with extensive code examples
 - 3 in-depth rules covering the most critical security areas
 - Examples: comprehensive secrets detection, injection vulnerabilities, cryptography security
@@ -209,7 +217,9 @@ CodeGuardian's security rules are organized into three levels:
 ### Featured Rules
 
 #### 🔐 Comprehensive Secrets Detection
+
 Detects hardcoded credentials across all secret types:
+
 - Passwords, connection strings (MySQL, PostgreSQL, MongoDB)
 - AWS credentials (AKIA pattern, secret keys, session tokens)
 - API keys: Stripe (sk_live_), Google (AIza), GitHub (ghp_)
@@ -217,13 +227,17 @@ Detects hardcoded credentials across all secret types:
 - Bearer tokens, OAuth tokens
 
 #### 💉 Injection Vulnerability Detection
+
 Complete coverage for injection attacks:
+
 - **SQL Injection**: Python, Java, JavaScript, PHP with parameterization examples
 - **Command Injection**: os.system, subprocess, Runtime.exec patterns
 - **XSS**: DOM-based XSS with dangerous sinks (innerHTML, eval, dangerouslySetInnerHTML)
 
 #### 🔒 Cryptography Security
+
 Ensures proper cryptographic implementations:
+
 - **Weak Algorithms**: MD5, SHA-1, DES, RC4 detection
 - **Password Hashing**: Requires bcrypt, Argon2id, or scrypt
 - **Insecure Random**: Math.random vs crypto.randomBytes
@@ -410,6 +424,7 @@ def internal_api():
 2. Require client certificates for internal endpoints
 3. Validate certificate CN matches expected services
 4. Use certificate pinning for critical services
+
 ```
 
 ## CI/CD Integration
@@ -484,35 +499,35 @@ security-review:
 Generated reports include:
 
 1. **Executive Summary**
-   - Overall security rating
-   - Findings by severity
-   - Compliance status
+    - Overall security rating
+    - Findings by severity
+    - Compliance status
 
 2. **Vulnerability Tracking**
-   - Fixed vulnerabilities
-   - Open vulnerabilities
-   - Regressed vulnerabilities
-   - New findings
+    - Fixed vulnerabilities
+    - Open vulnerabilities
+    - Regressed vulnerabilities
+    - New findings
 
 3. **Detailed Findings**
-   - Location (file:line)
-   - Description and impact
-   - Vulnerable code snippet
-   - Remediation steps with secure examples
-   - CWE, OWASP, compliance mappings
+    - Location (file:line)
+    - Description and impact
+    - Vulnerable code snippet
+    - Remediation steps with secure examples
+    - CWE, OWASP, compliance mappings
 
 4. **Compliance Analysis**
-   - Framework-specific findings
-   - Technical control verification
+    - Framework-specific findings
+    - Technical control verification
 
 5. **API Security Assessment**
-   - Endpoints discovered
-   - Authentication/authorization issues
-   - Rate limiting analysis
+    - Endpoints discovered
+    - Authentication/authorization issues
+    - Rate limiting analysis
 
 6. **Remediation Roadmap**
-   - Prioritized action plan
-   - Estimated effort
+    - Prioritized action plan
+    - Estimated effort
 
 ### Report Location
 
@@ -576,6 +591,7 @@ Comprehensive coverage for:
 ## Compliance Coverage
 
 ### PCI DSS (Payment Card Industry)
+
 - Requirement 3.4: Protect stored cardholder data
 - Requirement 4.1: Encrypt transmission of cardholder data
 - Requirement 6.5.1: Injection flaws
@@ -583,16 +599,19 @@ Comprehensive coverage for:
 - Requirement 10: Track and monitor all access
 
 ### SOC 2 (Service Organization Control)
+
 - CC6.1: Logical and physical access controls
 - CC6.7: System infrastructure and software
 - CC7.2: System monitoring
 
 ### HIPAA (Healthcare)
+
 - 164.312(a)(1): Access controls for ePHI
 - 164.312(e)(1): Transmission security
 - 164.308(a)(5): Security awareness and training
 
 ### GDPR/CCPA (Privacy)
+
 - Data encryption and protection
 - Access control and authentication
 - Logging and monitoring
@@ -618,6 +637,7 @@ Typical performance on medium-sized projects:
 - **Memory Usage**: ~2GB for large projects
 
 Configure in `.code-review-config.yml`:
+
 ```yaml
 performance:
   max_parallel_files: 4
@@ -630,6 +650,7 @@ performance:
 ### No Issues Found
 
 If no issues are found but you expect some:
+
 1. Check `.code-review-config.yml` scope includes your files
 2. Run with `--verbose` to see which files are analyzed
 3. Verify rules are loaded: check for `rules/rules/*.md` files
@@ -637,6 +658,7 @@ If no issues are found but you expect some:
 ### False Positives
 
 If you get false positives:
+
 1. Add suppression comment in code: `# nosec` or `# security: ignore`
 2. Add file/directory to `scope.exclude` in config
 3. Create custom rule with more specific pattern
@@ -644,6 +666,7 @@ If you get false positives:
 ### Performance Issues
 
 For large codebases:
+
 1. Use `--quick` mode for faster scans
 2. Narrow `scope.include` to relevant directories
 3. Increase `max_parallel_files` in config
@@ -654,6 +677,7 @@ For large codebases:
 Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Ways to contribute:
+
 - Add new security rules
 - Improve existing rules
 - Add language support
@@ -666,6 +690,7 @@ Ways to contribute:
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 **Latest**: v2.0.0 (2024-10-24)
+
 - Migrated to markdown-based natural language rules
 - Added 3 comprehensive Level 2 detection rules
 - Enhanced context-aware analysis

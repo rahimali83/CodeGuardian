@@ -7,20 +7,24 @@
 #### Agent Not Finding Configuration File
 
 **Symptoms**:
+
 - Agent runs with default configuration
 - Custom settings not applied
 
 **Causes**:
+
 - Configuration file not in project root
 - Wrong filename or extension
 
 **Solutions**:
+
 1. Ensure `.code-review-config.yml` is in project root directory (where you run the command)
 2. Check filename spelling: must be `.code-review-config.yml` (starts with dot)
 3. Verify YAML syntax: use a YAML validator
 4. Run with `--verbose` to see config loading messages
 
 **Verify**:
+
 ```bash
 ls -la .code-review-config.yml  # Should show the file
 ```
@@ -28,16 +32,19 @@ ls -la .code-review-config.yml  # Should show the file
 #### Custom Rules Not Loading
 
 **Symptoms**:
+
 - Custom rules don't appear in report appendix
 - Expected violations not found
 
 **Causes**:
+
 - Wrong rules directory path
 - Invalid markdown frontmatter syntax in rules
 - Missing `.md` file extension
 - Rules excluded by language scope
 
 **Solutions**:
+
 1. Verify `custom_rules_dir` in configuration points to correct directory
 2. Check that custom rule files have `.md` extension
 3. Validate markdown frontmatter syntax (YAML format between `---` markers)
@@ -46,6 +53,7 @@ ls -la .code-review-config.yml  # Should show the file
 6. Use `--list-rules` to see loaded rules
 
 **Debug**:
+
 ```bash
 # Check rule files exist
 ls -la security-rules/*.md
@@ -63,16 +71,19 @@ claude code security-review --verbose
 #### Invalid Rule Frontmatter
 
 **Symptoms**:
+
 - Error messages about rule parsing
 - Custom rules not loaded
 
 **Solutions**:
+
 1. Ensure frontmatter is surrounded by `---` markers
 2. Check YAML syntax within frontmatter (indentation, colons, lists)
 3. Verify required fields: `description`, `languages`, `alwaysApply`, `severity`
 4. Use proper list format for languages
 
 **Common Frontmatter Mistakes**:
+
 ```markdown
 # WRONG - no closing ---
 ---
@@ -123,11 +134,13 @@ severity: HIGH
 #### Slow Analysis of Large Codebases
 
 **Symptoms**:
+
 - Analysis takes very long time
 - High memory usage
 - Timeouts
 
 **Solutions**:
+
 1. Use `--quick` mode for faster analysis:
    ```bash
    claude code security-review --quick
@@ -161,10 +174,12 @@ severity: HIGH
 #### Memory Usage Problems
 
 **Symptoms**:
+
 - Out of memory errors
 - System slowdown during analysis
 
 **Solutions**:
+
 1. Reduce `max_parallel_files` in configuration
 2. Exclude large binary files and dependencies
 3. Analyze smaller portions of codebase separately
@@ -174,10 +189,12 @@ severity: HIGH
 #### Timeout Errors
 
 **Symptoms**:
+
 - Analysis stops with timeout error
 - Incomplete reports
 
 **Solutions**:
+
 1. Increase timeout settings:
    ```yaml
    performance:
@@ -193,10 +210,12 @@ severity: HIGH
 #### Too Many False Positive Findings
 
 **Symptoms**:
+
 - Many findings that aren't real security issues
 - Findings in test code or examples
 
 **Solutions**:
+
 1. Add false positive indicators to custom rules:
    ```yaml
    false_positive_indicators:
@@ -225,12 +244,14 @@ severity: HIGH
 #### Suppressing Specific Findings
 
 **Method 1 - Inline Suppression**:
+
 ```python
 # nosec: rule-name
 dangerous_but_safe_code()
 ```
 
 **Method 2 - Block Suppression**:
+
 ```python
 # nosec: start
 multiple_lines()
@@ -239,6 +260,7 @@ of_code_to_suppress()
 ```
 
 **Method 3 - File Exclusion**:
+
 ```yaml
 scope:
   exclude:
@@ -250,10 +272,12 @@ scope:
 #### Reports Not Generating
 
 **Symptoms**:
+
 - Analysis completes but no report file
 - Incomplete reports
 
 **Solutions**:
+
 1. Check disk space and write permissions:
    ```bash
    df -h .                    # Check disk space
@@ -273,10 +297,12 @@ scope:
 #### Incorrect Vulnerability Status Tracking
 
 **Symptoms**:
+
 - Previous vulnerabilities not found
 - Wrong status (fixed vs not fixed)
 
 **Solutions**:
+
 1. Ensure previous report exists in output directory
 2. Check that file paths in previous report are still valid
 3. Verify code hasn't moved to different files/lines
@@ -285,10 +311,12 @@ scope:
 #### Missing Compliance Sections
 
 **Symptoms**:
+
 - Expected compliance framework sections missing from report
 - "N/A" for all compliance requirements
 
 **Solutions**:
+
 1. Enable frameworks in configuration:
    ```yaml
    compliance:
@@ -306,10 +334,12 @@ scope:
 #### Pre-Commit Hook Failures
 
 **Symptoms**:
+
 - Commits blocked unexpectedly
 - Hook errors
 
 **Solutions**:
+
 1. Make hook executable:
    ```bash
    chmod +x .git/hooks/pre-commit
@@ -330,10 +360,12 @@ scope:
 #### CI Pipeline Failures
 
 **Symptoms**:
+
 - Pipeline fails on security review step
 - Inconsistent CI results
 
 **Solutions**:
+
 1. Verify agent is installed in CI environment
 2. Check CI environment has access to configuration file
 3. Ensure sufficient CI runner resources (memory, timeout)
@@ -350,10 +382,12 @@ scope:
 #### Webhook Notification Failures
 
 **Symptoms**:
+
 - Notifications not sent
 - Webhook errors
 
 **Solutions**:
+
 1. Verify webhook URL is correct
 2. Check network connectivity from CI to webhook endpoint
 3. Validate webhook authentication/secrets
@@ -369,15 +403,18 @@ scope:
 #### No Findings When Vulnerabilities Exist
 
 **Symptoms**:
+
 - Known vulnerabilities not detected
 - Empty or minimal reports
 
 **Causes**:
+
 - Files not in scope
 - Rules not matching code patterns
 - Overly specific scope patterns
 
 **Solutions**:
+
 1. Verify files are in scope:
    ```bash
    claude code security-review --verbose  # Shows files analyzed
@@ -391,10 +428,12 @@ scope:
 #### Analysis Hangs or Freezes
 
 **Symptoms**:
+
 - Analysis never completes
 - Process hangs indefinitely
 
 **Solutions**:
+
 1. Set file timeout in configuration
 2. Identify problematic file with `--verbose`
 3. Exclude hanging file temporarily
@@ -406,6 +445,7 @@ scope:
 #### Out of Memory Crashes
 
 **Solutions**:
+
 1. Reduce `max_parallel_files`
 2. Increase system memory
 3. Add swap space
@@ -414,6 +454,7 @@ scope:
 #### Segmentation Faults
 
 **Solutions**:
+
 1. Update agent to latest version
 2. Check for corrupt configuration files
 3. Verify rule syntax
@@ -435,6 +476,7 @@ Gather this information:
 ### Debug Mode
 
 Run with maximum verbosity:
+
 ```bash
 claude code security-review --verbose --debug
 ```
@@ -442,6 +484,7 @@ claude code security-review --verbose --debug
 ### Log Files
 
 Check agent logs:
+
 ```bash
 tail -f security-review.log
 ```

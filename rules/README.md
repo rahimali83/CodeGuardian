@@ -2,9 +2,11 @@
 
 ## Overview
 
-This directory contains the built-in security rules for the CodeGuardian Security Code Review Agent. CodeGuardian uses **markdown-based security rules** that Claude agents can understand and reason about contextually.
+This directory contains the built-in security rules for the CodeGuardian Security Code Review Agent. CodeGuardian uses *
+*markdown-based security rules** that Claude agents can understand and reason about contextually.
 
-Custom rules can be created and placed in your project's custom rules directory (default: `security-rules/` in your project root).
+Custom rules can be created and placed in your project's custom rules directory (default: `security-rules/` in your
+project root).
 
 ## Why Markdown Rules?
 
@@ -103,6 +105,7 @@ All rules are mapped to relevant compliance requirements:
 For a complete catalog with descriptions, see **[RULES-INDEX.md](RULES-INDEX.md)**.
 
 The index provides:
+
 - Quick reference by vulnerability type
 - Search by technology or language
 - Compliance framework mappings
@@ -116,7 +119,8 @@ The `examples/` directory contains example custom rules:
 - **`custom-aws-credentials.md`** - Comprehensive markdown rule for detecting hardcoded AWS credentials
 - **`README.md`** - Template and guide for creating custom markdown rules
 
-**Legacy YAML examples** (`*.yml` files) are preserved for reference but should **not** be used as templates for new rules.
+**Legacy YAML examples** (`*.yml` files) are preserved for reference but should **not** be used as templates for new
+rules.
 
 ## Creating Custom Rules
 
@@ -161,9 +165,9 @@ The `examples/` directory contains example custom rules:
 
    ### When to Flag
 
-   - Specific patterns to look for
-   - Context indicators
-   - Confidence criteria
+    - Specific patterns to look for
+    - Context indicators
+    - Confidence criteria
 
    ## Remediation
 
@@ -237,13 +241,13 @@ A complete rule should include:
 ## Severity Levels
 
 - **CRITICAL**: Immediate system compromise, data breach, critical compliance violation
-  - Examples: Hardcoded secrets, SQL injection, RCE vulnerabilities
+    - Examples: Hardcoded secrets, SQL injection, RCE vulnerabilities
 - **HIGH**: Significant security weakness, exploitable with moderate effort
-  - Examples: XSS, weak cryptography, missing authentication
+    - Examples: XSS, weak cryptography, missing authentication
 - **MEDIUM**: Requires specific conditions to exploit, limited impact
-  - Examples: Weak random generation, missing rate limiting, debug mode
+    - Examples: Weak random generation, missing rate limiting, debug mode
 - **LOW**: Minor improvements, best practice violations
-  - Examples: Weak input validation, code quality issues
+    - Examples: Weak input validation, code quality issues
 
 ## Testing Rules
 

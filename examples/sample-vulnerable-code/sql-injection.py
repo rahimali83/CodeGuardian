@@ -1,7 +1,24 @@
+#  Copyright (c) ${YEAR} Virtuous BPO Software Projects
+# 
+#   All rights reserved.
+# 
+#   This software and associated documentation files (the "Software") are proprietary to Virtuous BPO Software Projects and are protected by copyright law and international treaty provisions. Unauthorized reproduction or distribution of this Software, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under the law.
+# 
+#  RESTRICTED RIGHTS: Use, duplication, or disclosure by the government is subject to restrictions as set forth in subparagraph (c)(1)(ii) of the Rights in Technical Data and Computer Software clause at DFARS 252.227-7013 or subparagraphs (c)(1) and (2) of the Commercial Computer Software-Restricted Rights clause at FAR 52.227-19, as applicable.
+# 
+#   * Contact: info@virtuousbpo.com
+#   * Website: www.virtuousbpo.com
+# 
+#   * Project: ${PROJECT_NAME}
+#   * File: ${FILE_NAME}
+#   * Created: ${DATE}
+#   * Author: ${USER}
+
 # Example of SQL Injection Vulnerability
 # This file demonstrates common SQL injection patterns for testing security reviews
 
 import sqlite3
+
 
 def get_user_by_username_insecure(username):
     """

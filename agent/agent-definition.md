@@ -9,31 +9,46 @@
 
 ## Description
 
-The Security Code Review Agent is an AI-powered security analysis system that performs comprehensive automated security reviews of codebases. It identifies vulnerabilities, compliance violations, and code quality issues while tracking remediation progress across multiple review iterations.
+The Security Code Review Agent is an AI-powered security analysis system that performs comprehensive automated security
+reviews of codebases. It identifies vulnerabilities, compliance violations, and code quality issues while tracking
+remediation progress across multiple review iterations.
 
-The agent analyzes code against OWASP Top 10, CWE standards, and multiple compliance frameworks including PCI DSS, SOC 2, PIPEDA (Canadian privacy law), CCPA, HIPAA, and NIST Cybersecurity Framework. It provides detailed, actionable findings with remediation guidance and educational context to help development teams improve their security posture.
+The agent analyzes code against OWASP Top 10, CWE standards, and multiple compliance frameworks including PCI DSS, SOC
+2, PIPEDA (Canadian privacy law), CCPA, HIPAA, and NIST Cybersecurity Framework. It provides detailed, actionable
+findings with remediation guidance and educational context to help development teams improve their security posture.
 
 ## Capabilities
 
 The Security Code Review Agent can:
 
-- **Analyze Code for Security Vulnerabilities**: Detect injection flaws (SQL, command, LDAP, NoSQL), authentication weaknesses, sensitive data exposure, XXE vulnerabilities, broken access control, security misconfigurations, XSS, insecure deserialization, vulnerable dependencies, insufficient logging, and API security issues
+- **Analyze Code for Security Vulnerabilities**: Detect injection flaws (SQL, command, LDAP, NoSQL), authentication
+  weaknesses, sensitive data exposure, XXE vulnerabilities, broken access control, security misconfigurations, XSS,
+  insecure deserialization, vulnerable dependencies, insufficient logging, and API security issues
 
-- **Check Regulatory Compliance**: Verify technical controls for PCI DSS (payment card security), SOC 2 (service organization controls), PIPEDA (Canadian privacy), CCPA (California privacy), HIPAA (healthcare data protection), and NIST Cybersecurity Framework
+- **Check Regulatory Compliance**: Verify technical controls for PCI DSS (payment card security), SOC 2 (service
+  organization controls), PIPEDA (Canadian privacy), CCPA (California privacy), HIPAA (healthcare data protection), and
+  NIST Cybersecurity Framework
 
-- **Review API Security**: Analyze API endpoints for authentication, authorization, rate limiting, input validation, and data exposure issues; review database connections and external API integrations
+- **Review API Security**: Analyze API endpoints for authentication, authorization, rate limiting, input validation, and
+  data exposure issues; review database connections and external API integrations
 
-- **Evaluate Secrets Management**: Detect hardcoded credentials, API keys, tokens, and private keys; assess secrets management practices
+- **Evaluate Secrets Management**: Detect hardcoded credentials, API keys, tokens, and private keys; assess secrets
+  management practices
 
-- **Assess Cryptographic Implementations**: Identify weak encryption algorithms, insecure key management, weak password hashing, and cryptographic failures
+- **Assess Cryptographic Implementations**: Identify weak encryption algorithms, insecure key management, weak password
+  hashing, and cryptographic failures
 
-- **Track Vulnerability Remediation**: Compare findings across multiple review iterations to show which vulnerabilities were fixed, partially fixed, remain open, or have regressed; provide metrics on remediation progress
+- **Track Vulnerability Remediation**: Compare findings across multiple review iterations to show which vulnerabilities
+  were fixed, partially fixed, remain open, or have regressed; provide metrics on remediation progress
 
-- **Load Security Rules from Markdown**: Apply comprehensive security rules defined in natural language markdown format that Claude agents can easily understand and reason about; supports both built-in and organization-specific rules
+- **Load Security Rules from Markdown**: Apply comprehensive security rules defined in natural language markdown format
+  that Claude agents can easily understand and reason about; supports both built-in and organization-specific rules
 
-- **Generate Standardized Reports**: Produce comprehensive security reports in markdown format following a consistent template for easy tracking and audit purposes
+- **Generate Standardized Reports**: Produce comprehensive security reports in markdown format following a consistent
+  template for easy tracking and audit purposes
 
-- **Integrate with Development Workflows**: Run in CI/CD pipelines, pre-commit hooks, pull request reviews, and scheduled scans
+- **Integrate with Development Workflows**: Run in CI/CD pipelines, pre-commit hooks, pull request reviews, and
+  scheduled scans
 
 ## Configuration
 
@@ -288,7 +303,8 @@ reporting:
 
 ### Markdown-Based Rules
 
-CodeGuardian uses **markdown-based security rules** rather than traditional YAML pattern matching. This design choice enables Claude agents to:
+CodeGuardian uses **markdown-based security rules** rather than traditional YAML pattern matching. This design choice
+enables Claude agents to:
 
 - **Understand context** and reasoning behind security requirements
 - **Apply nuanced judgment** about what constitutes a vulnerability
@@ -299,11 +315,14 @@ CodeGuardian uses **markdown-based security rules** rather than traditional YAML
 
 Security rules are located in `rules/rules/` and organized into three levels:
 
-**Level 0 (codeguard-0-*.md)**: Foundational security principles covering broad domains like authentication, authorization, input validation, API security, etc. These provide comprehensive security guidance.
+**Level 0 (codeguard-0-*.md)**: Foundational security principles covering broad domains like authentication,
+authorization, input validation, API security, etc. These provide comprehensive security guidance.
 
-**Level 1 (codeguard-1-*.md)**: Specific detection rules for particular vulnerability classes like hardcoded credentials, cryptographic algorithms, safe C functions.
+**Level 1 (codeguard-1-*.md)**: Specific detection rules for particular vulnerability classes like hardcoded
+credentials, cryptographic algorithms, safe C functions.
 
-**Level 2 (codeguard-2-*.md)**: Comprehensive detection patterns with detailed code examples for critical vulnerabilities like secrets detection, injection flaws, and cryptography failures.
+**Level 2 (codeguard-2-*.md)**: Comprehensive detection patterns with detailed code examples for critical
+vulnerabilities like secrets detection, injection flaws, and cryptography failures.
 
 ### Rule Structure
 
@@ -377,7 +396,8 @@ Run a full security review of the entire project:
 claude code security-review
 ```
 
-This performs a complete security analysis using the configuration from `.code-review-config.yml` (or defaults if not present) and generates a report in the configured output directory.
+This performs a complete security analysis using the configuration from `.code-review-config.yml` (or defaults if not
+present) and generates a report in the configured output directory.
 
 ### Advanced Options
 
@@ -404,7 +424,8 @@ Analyzes only files that have changed since the last git commit. Useful for quic
 claude code security-review --quick
 ```
 
-Performs a faster, less comprehensive analysis focusing on high-severity issues only. Good for rapid feedback during development.
+Performs a faster, less comprehensive analysis focusing on high-severity issues only. Good for rapid feedback during
+development.
 
 #### Full Detailed Scan
 
@@ -412,7 +433,8 @@ Performs a faster, less comprehensive analysis focusing on high-severity issues 
 claude code security-review --full --verbose
 ```
 
-Performs the most thorough analysis possible, including deeper data flow analysis and pattern matching. Takes longer but finds more subtle issues.
+Performs the most thorough analysis possible, including deeper data flow analysis and pattern matching. Takes longer but
+finds more subtle issues.
 
 #### Check Specific Compliance Framework
 
@@ -438,7 +460,8 @@ Re-examines specific vulnerabilities to verify their remediation status.
 claude code security-review --report-only
 ```
 
-Generates a new report from the most recent analysis data without performing new analysis. Useful for reformatting or regenerating reports.
+Generates a new report from the most recent analysis data without performing new analysis. Useful for reformatting or
+regenerating reports.
 
 #### Custom Rules Directory
 
@@ -473,8 +496,8 @@ When the Security Code Review Agent is invoked, it follows this systematic proce
 
 1. The agent searches for previous security reports in the configured output directory
 2. If a previous report exists (`latest-report.md` or most recent timestamped report):
-   - The report is parsed to extract all previously identified vulnerabilities
-   - Each vulnerability's ID, location, severity, and description are captured
+    - The report is parsed to extract all previously identified vulnerabilities
+    - Each vulnerability's ID, location, severity, and description are captured
 3. This enables tracking of which vulnerabilities were fixed, remain open, or have regressed
 
 ### Step 3: Scope Determination
@@ -498,6 +521,7 @@ For each file in scope, the agent performs comprehensive analysis:
 7. **Secrets Scanning**: Code is scanned for hardcoded credentials and sensitive data
 
 The agent examines code for:
+
 - **Injection flaws**: SQL injection, command injection, LDAP injection, NoSQL injection, template injection
 - **Authentication issues**: Hardcoded credentials, weak passwords, insecure tokens, session fixation
 - **Sensitive data exposure**: Unencrypted data, cleartext transmission, weak encryption, sensitive data in logs
@@ -518,60 +542,62 @@ For each vulnerability identified in the previous report:
 1. The agent navigates to the exact file and line number mentioned
 2. The code is re-examined to determine if the vulnerability still exists
 3. Status is determined:
-   - **Fixed**: The vulnerability has been completely remediated
-   - **Partially Fixed**: Some mitigation was applied but the vulnerability remains
-   - **Not Fixed**: No changes were made, the vulnerability is still present
-   - **Regressed**: The vulnerability was fixed in an earlier review but has returned
-   - **Code Removed**: The vulnerable code no longer exists in the codebase
+    - **Fixed**: The vulnerability has been completely remediated
+    - **Partially Fixed**: Some mitigation was applied but the vulnerability remains
+    - **Not Fixed**: No changes were made, the vulnerability is still present
+    - **Regressed**: The vulnerability was fixed in an earlier review but has returned
+    - **Code Removed**: The vulnerable code no longer exists in the codebase
 4. For fixed issues, the remediation approach is noted and verified for completeness
 5. For open issues, the number of days the issue has been open is calculated
 6. Severity may be escalated for long-standing issues
 
 ### Step 6: Risk Assessment and Prioritization
 
-1. **Severity Assignment**: Each finding is assigned a severity level (Critical, High, Medium, Low, Informational) based on:
-   - Exploitability: How easy is it to exploit?
-   - Impact: What damage could be done if exploited?
-   - Compliance implications: Does this violate regulatory requirements?
-   - Context: Is this production code or test code? Is this reachable by attackers?
+1. **Severity Assignment**: Each finding is assigned a severity level (Critical, High, Medium, Low, Informational) based
+   on:
+    - Exploitability: How easy is it to exploit?
+    - Impact: What damage could be done if exploited?
+    - Compliance implications: Does this violate regulatory requirements?
+    - Context: Is this production code or test code? Is this reachable by attackers?
 
 2. **Finding Correlation**: Related vulnerabilities are grouped together:
-   - Multiple instances of the same vulnerability type
-   - Vulnerabilities that create attack chains when combined
-   - Systemic issues indicating broader security problems
+    - Multiple instances of the same vulnerability type
+    - Vulnerabilities that create attack chains when combined
+    - Systemic issues indicating broader security problems
 
-3. **Attack Chain Identification**: The agent identifies combinations of vulnerabilities that together enable serious attacks
+3. **Attack Chain Identification**: The agent identifies combinations of vulnerabilities that together enable serious
+   attacks
 
 4. **Prioritization**: Findings are ordered by:
-   - Severity level
-   - Compliance impact
-   - Exploitability
-   - Business criticality
+    - Severity level
+    - Compliance impact
+    - Exploitability
+    - Business criticality
 
 ### Step 7: Report Generation
 
 1. The agent follows the standardized report template located at `templates/report-template.md`
 2. The report is populated with:
-   - **Executive Summary**: High-level overview with key metrics and overall security rating
-   - **Previous Vulnerability Status Update**: Status of all vulnerabilities from the previous report
-   - **New Vulnerabilities**: All security issues discovered in this review
-   - **Compliance Analysis**: Detailed analysis for each enabled compliance framework
-   - **API Security Assessment**: Analysis of API endpoints, database connections, and integrations
-   - **Security Management Evaluation**: Assessment of secrets management, dependencies, configuration, and logging
-   - **Code Quality Observations**: Code quality issues affecting security
-   - **Remediation Roadmap**: Prioritized plan organized by urgency
-   - **Metrics and Trends**: Vulnerability density, remediation metrics, trend analysis
-   - **Appendices**: Custom rules applied, files analyzed, false positives, exclusions
+    - **Executive Summary**: High-level overview with key metrics and overall security rating
+    - **Previous Vulnerability Status Update**: Status of all vulnerabilities from the previous report
+    - **New Vulnerabilities**: All security issues discovered in this review
+    - **Compliance Analysis**: Detailed analysis for each enabled compliance framework
+    - **API Security Assessment**: Analysis of API endpoints, database connections, and integrations
+    - **Security Management Evaluation**: Assessment of secrets management, dependencies, configuration, and logging
+    - **Code Quality Observations**: Code quality issues affecting security
+    - **Remediation Roadmap**: Prioritized plan organized by urgency
+    - **Metrics and Trends**: Vulnerability density, remediation metrics, trend analysis
+    - **Appendices**: Custom rules applied, files analyzed, false positives, exclusions
 
 3. Every vulnerability finding includes:
-   - Unique identifier for tracking
-   - Clear description of the issue
-   - Risk analysis and potential impact
-   - Attack vector explaining exploitation
-   - Vulnerable code snippet
-   - Specific remediation guidance
-   - Secure code example
-   - References to OWASP, CWE, CVE, and compliance requirements
+    - Unique identifier for tracking
+    - Clear description of the issue
+    - Risk analysis and potential impact
+    - Attack vector explaining exploitation
+    - Vulnerable code snippet
+    - Specific remediation guidance
+    - Secure code example
+    - References to OWASP, CWE, CVE, and compliance requirements
 
 ### Step 8: Report Storage
 
@@ -583,19 +609,19 @@ For each vulnerability identified in the previous report:
 ### Step 9: Exit Code and Summary
 
 1. A summary is displayed to the console showing:
-   - Total files analyzed
-   - Total lines of code reviewed
-   - Total vulnerabilities found (broken down by severity)
-   - Number of previous vulnerabilities fixed
-   - Number of previous vulnerabilities still open
-   - Report file location
+    - Total files analyzed
+    - Total lines of code reviewed
+    - Total vulnerabilities found (broken down by severity)
+    - Number of previous vulnerabilities fixed
+    - Number of previous vulnerabilities still open
+    - Report file location
 
 2. The agent exits with an appropriate exit code:
-   - **0**: Success - no critical issues, or findings below configured thresholds
-   - **1**: Failure - critical findings exceed threshold
-   - **2**: Failure - high findings exceed threshold
-   - **3**: Failure - regression detected and fail_on_regression is enabled
-   - **10**: Error - configuration error or analysis failure
+    - **0**: Success - no critical issues, or findings below configured thresholds
+    - **1**: Failure - critical findings exceed threshold
+    - **2**: Failure - high findings exceed threshold
+    - **3**: Failure - regression detected and fail_on_regression is enabled
+    - **10**: Error - configuration error or analysis failure
 
 Exit codes can be used in CI/CD pipelines to gate deployments based on security findings.
 
@@ -765,6 +791,7 @@ Reports are stored in the configured output directory (default: `security-report
 - **Latest report link**: `latest-report.md` (always points to most recent review)
 
 This allows you to:
+
 - Track security posture over time
 - Compare findings across different dates
 - Demonstrate security improvements to auditors
@@ -774,11 +801,15 @@ This allows you to:
 
 Every report includes these sections:
 
-1. **Executive Summary**: High-level overview, security rating, findings summary, compliance status, top issues, remediation roadmap
+1. **Executive Summary**: High-level overview, security rating, findings summary, compliance status, top issues,
+   remediation roadmap
 2. **Previous Vulnerability Status**: Tracking of whether previous findings were fixed, remain open, or regressed
-3. **New Vulnerabilities**: Detailed findings with descriptions, risk analysis, attack vectors, code snippets, and remediation guidance
-4. **Compliance Analysis**: Detailed analysis for each enabled compliance framework (PCI DSS, SOC 2, PIPEDA, CCPA, HIPAA, NIST)
-5. **API Security Assessment**: Analysis of API endpoints, authentication, authorization, database connections, and integrations
+3. **New Vulnerabilities**: Detailed findings with descriptions, risk analysis, attack vectors, code snippets, and
+   remediation guidance
+4. **Compliance Analysis**: Detailed analysis for each enabled compliance framework (PCI DSS, SOC 2, PIPEDA, CCPA,
+   HIPAA, NIST)
+5. **API Security Assessment**: Analysis of API endpoints, authentication, authorization, database connections, and
+   integrations
 6. **Security Management**: Evaluation of secrets management, dependencies, configuration, and logging
 7. **Code Quality**: Observations on code quality affecting security maintainability
 8. **Remediation Roadmap**: Prioritized action plan (immediate, short-term, medium-term, long-term)
@@ -787,15 +818,18 @@ Every report includes these sections:
 
 ## Custom Rules
 
-The agent supports loading **custom security rules** to extend the built-in rule set with organization-specific requirements.
+The agent supports loading **custom security rules** to extend the built-in rule set with organization-specific
+requirements.
 
 ### Custom Rules Directory
 
-Custom rules are loaded from the directory specified in configuration (default: `security-rules/`). The agent loads all `.md` markdown files from this directory.
+Custom rules are loaded from the directory specified in configuration (default: `security-rules/`). The agent loads all
+`.md` markdown files from this directory.
 
 ### Custom Rule Format
 
-Custom rules are written as **markdown files** with natural language descriptions that Claude can understand and reason about:
+Custom rules are written as **markdown files** with natural language descriptions that Claude can understand and reason
+about:
 
 ```markdown
 ---
@@ -825,6 +859,7 @@ db.query(f"SELECT * FROM users WHERE id = {user_input}")
 ```
 
 **SECURE - What developers must use:**
+
 ```python
 # Example of secure alternative
 import os
@@ -853,6 +888,7 @@ db.query("SELECT * FROM users WHERE id = %s", (user_input,))
 ## Summary
 
 Brief recap of the rule and key takeaways.
+
 ```
 
 For complete documentation on creating custom rules, see `docs/custom-rules-guide.md`.
@@ -871,13 +907,15 @@ claude code security-review --list-rules
 
 **Symptom**: Agent runs with default configuration instead of your `.code-review-config.yml`
 
-**Solution**: Ensure the configuration file is in the project root directory (same directory where you run the command). Check filename spelling and extension (.yml vs .yaml).
+**Solution**: Ensure the configuration file is in the project root directory (same directory where you run the command).
+Check filename spelling and extension (.yml vs .yaml).
 
 ### Custom Rules Not Loading
 
 **Symptom**: Custom rules don't appear in report appendix or aren't applied
 
 **Solution**:
+
 1. Verify the `custom_rules_dir` path in configuration is correct
 2. Check that custom rule files have `.md` extension
 3. Validate markdown frontmatter syntax (YAML format between `---` markers)
@@ -888,13 +926,15 @@ claude code security-review --list-rules
 
 **Symptom**: Report says "No previous report found" even though reports exist
 
-**Solution**: This is expected on first run. Ensure subsequent runs save reports to the same output directory configured. Check that `reporting.output_dir` in configuration points to the correct location.
+**Solution**: This is expected on first run. Ensure subsequent runs save reports to the same output directory
+configured. Check that `reporting.output_dir` in configuration points to the correct location.
 
 ### Large Codebase Performance
 
 **Symptom**: Analysis takes very long or times out on large codebases
 
 **Solution**:
+
 1. Use `--quick` mode for faster analysis
 2. Narrow scope with more specific `include` patterns
 3. Use broader `exclude` patterns to skip non-security-critical files
@@ -906,6 +946,7 @@ claude code security-review --list-rules
 **Symptom**: Agent reports issues that aren't actually vulnerabilities
 
 **Solution**:
+
 1. Review the finding carefully - it may be a real issue with mitigating context
 2. Add suppression comments in code: `# nosec` or `# security: ignore`
 3. Adjust rule sensitivity if using custom rules
@@ -916,6 +957,7 @@ claude code security-review --list-rules
 **Symptom**: Analysis completes but report isn't generated or is incomplete
 
 **Solution**:
+
 1. Check disk space and write permissions for output directory
 2. Verify output directory path in configuration
 3. Run with `--verbose` to see detailed error messages
@@ -940,6 +982,7 @@ For issues, feature requests, or questions:
 ## Version History
 
 **Version 1.0.0** (Initial Release)
+
 - Comprehensive security vulnerability detection
 - Multi-framework compliance checking (PCI DSS, SOC 2, PIPEDA, CCPA, HIPAA, NIST)
 - API security analysis

@@ -5,12 +5,14 @@ Get started with CodeGuardian Security Code Review Agent in 5 minutes.
 ## What is CodeGuardian?
 
 CodeGuardian is an AI-powered security code review agent for Claude Code that:
+
 - Detects vulnerabilities (OWASP Top 10, CWE standards)
 - Checks compliance (PCI DSS, SOC 2, HIPAA, GDPR, etc.)
 - Tracks remediation progress across reviews
 - Provides detailed fix guidance with secure code examples
 
-**Key Feature**: Uses **markdown-based natural language rules** that Claude agents understand contextually, reducing false positives and providing better explanations.
+**Key Feature**: Uses **markdown-based natural language rules** that Claude agents understand contextually, reducing
+false positives and providing better explanations.
 
 ## Prerequisites
 
@@ -60,12 +62,12 @@ code security-reports/latest-report.md
 1. **Executive Summary**: Overall security rating and findings count
 2. **Vulnerability Status**: What was fixed, what's still open, any regressions
 3. **New Vulnerabilities**: Detailed findings with:
-   - Location (file:line)
-   - Risk analysis
-   - Vulnerable code snippet
-   - Secure alternative with code example
-   - Remediation steps
-   - Compliance impact
+    - Location (file:line)
+    - Risk analysis
+    - Vulnerable code snippet
+    - Secure alternative with code example
+    - Remediation steps
+    - Compliance impact
 4. **Compliance Analysis**: Technical control verification per framework
 5. **API Security Assessment**: Endpoint and integration security
 6. **Remediation Roadmap**: Prioritized action plan
@@ -151,6 +153,7 @@ claude code security-review --quick --diff || {
 ```
 
 Make it executable:
+
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
@@ -202,7 +205,9 @@ security-review:
 CodeGuardian uses **25 comprehensive security rules** (3,186+ lines of security guidance) organized in three levels:
 
 ### Level 0 (Foundational) - 18 Rules
+
 Core security principles covering broad security domains:
+
 - Authentication & MFA (passwords, OAuth/OIDC, SAML, WebAuthn, tokens)
 - Authorization & Access Control (RBAC/ABAC, IDOR prevention)
 - Input Validation & Injection Defense (SQL, LDAP, command, NoSQL, template)
@@ -223,17 +228,24 @@ Core security principles covering broad security domains:
 - XML & Serialization Security
 
 ### Level 1 (Specific) - 4 Rules
+
 Focused vulnerability detection for specific vulnerability classes:
+
 - Hardcoded credentials (recognition patterns, variable naming)
 - Weak cryptographic algorithms (MD5, SHA-1, DES deprecated; SHA-256+, AES-GCM required)
 - Digital certificates (validation, pinning)
 - Safe C functions (memory-safe alternatives for strcpy, sprintf, etc.)
 
 ### Level 2 (Comprehensive) - 3 Rules
+
 Deep detection patterns with extensive code examples for the most critical areas:
-- **Secrets Detection**: Passwords, AWS keys (AKIA*), Stripe keys (sk_live_*), GitHub tokens (ghp_*), API keys, private keys
-- **Injection Vulnerabilities**: SQL (language-specific patterns), command injection, XSS (DOM-based), LDAP, NoSQL, template injection
-- **Cryptography Security**: Weak hashing algorithms, password storage (bcrypt, Argon2id), insecure random number generation
+
+- **Secrets Detection**: Passwords, AWS keys (AKIA*), Stripe keys (sk_live_*), GitHub tokens (ghp_*), API keys, private
+  keys
+- **Injection Vulnerabilities**: SQL (language-specific patterns), command injection, XSS (DOM-based), LDAP, NoSQL,
+  template injection
+- **Cryptography Security**: Weak hashing algorithms, password storage (bcrypt, Argon2id), insecure random number
+  generation
 
 See `rules/RULES-INDEX.md` for complete catalog with detailed code examples and remediation guidance.
 
@@ -244,6 +256,7 @@ See `rules/RULES-INDEX.md` for complete catalog with detailed code examples and 
 **Finding**: `AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"`
 
 **Fix**: Use environment variables
+
 ```python
 import os
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
@@ -256,6 +269,7 @@ if not AWS_ACCESS_KEY_ID:
 **Finding**: `query = f"SELECT * FROM users WHERE id = {user_id}"`
 
 **Fix**: Use parameterized queries
+
 ```python
 query = "SELECT * FROM users WHERE id = %s"
 cursor.execute(query, (user_id,))
@@ -266,6 +280,7 @@ cursor.execute(query, (user_id,))
 **Finding**: `password_hash = hashlib.sha256(password.encode()).hexdigest()`
 
 **Fix**: Use bcrypt
+
 ```python
 import bcrypt
 password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12))
@@ -276,6 +291,7 @@ password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12))
 **Finding**: `token = str(random.random())`
 
 **Fix**: Use secrets module
+
 ```python
 import secrets
 token = secrets.token_hex(32)
@@ -288,6 +304,7 @@ Need organization-specific detection? Create custom rules in `security-rules/`:
 1. **Create markdown file**: `security-rules/custom-my-rule.md`
 
 2. **Use this template**:
+
 ```markdown
 ---
 description: What this rule checks
@@ -307,6 +324,7 @@ severity: HIGH
 ```
 
 **SECURE:**
+
 ```python
 # Secure alternative
 ```
@@ -314,6 +332,7 @@ severity: HIGH
 ## Remediation
 
 Step-by-step fix instructions.
+
 ```
 
 3. **Test your rule**:
@@ -365,6 +384,7 @@ Normal on first run. CodeGuardian uses sensible defaults. Create `.code-review-c
 ### "Analysis takes too long"
 
 Use `--quick` mode or narrow scope in configuration:
+
 ```yaml
 scope:
   include:

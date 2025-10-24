@@ -1,40 +1,43 @@
 # Migration to Markdown-Based Security Rules
 
 ## Date: 2024-10-24
+
 ## Version: 2.0.0
 
 ## Summary
 
-CodeGuardian has been successfully migrated from YAML-based pattern matching rules to **markdown-based natural language security rules**. This change makes the rules more accessible to Claude agents, enabling better context understanding and more nuanced security analysis.
+CodeGuardian has been successfully migrated from YAML-based pattern matching rules to **markdown-based natural language
+security rules**. This change makes the rules more accessible to Claude agents, enabling better context understanding
+and more nuanced security analysis.
 
 ## Why Markdown Instead of YAML?
 
 ### Advantages of Markdown Rules
 
 1. **Natural Language Understanding**
-   - Claude agents excel at understanding natural language explanations
-   - Context and reasoning are preserved alongside detection patterns
-   - Nuanced judgment possible based on code context
+    - Claude agents excel at understanding natural language explanations
+    - Context and reasoning are preserved alongside detection patterns
+    - Nuanced judgment possible based on code context
 
 2. **Better Explanations**
-   - Each rule includes detailed explanations of WHY something is dangerous
-   - Multiple code examples showing insecure and secure patterns
-   - Step-by-step remediation instructions
+    - Each rule includes detailed explanations of WHY something is dangerous
+    - Multiple code examples showing insecure and secure patterns
+    - Step-by-step remediation instructions
 
 3. **Easier to Maintain**
-   - Human-readable format makes rules easier to review and update
-   - No need to learn YAML schema
-   - Collaborative editing more accessible
+    - Human-readable format makes rules easier to review and update
+    - No need to learn YAML schema
+    - Collaborative editing more accessible
 
 4. **Flexible Detection**
-   - Claude can adapt patterns to different coding styles and frameworks
-   - Not limited to rigid regex patterns
-   - Can understand semantic equivalence
+    - Claude can adapt patterns to different coding styles and frameworks
+    - Not limited to rigid regex patterns
+    - Can understand semantic equivalence
 
 5. **Educational Value**
-   - Rules serve as security documentation
-   - Developers can read rules to learn secure coding
-   - Compliance mappings clearly explained
+    - Rules serve as security documentation
+    - Developers can read rules to learn secure coding
+    - Compliance mappings clearly explained
 
 ### YAML Limitations
 
@@ -51,31 +54,32 @@ CodeGuardian has been successfully migrated from YAML-based pattern matching rul
 Three comprehensive Level 2 markdown rules were created:
 
 1. **`rules/rules/codeguard-2-secrets-detection.md`**
-   - Comprehensive secrets and hardcoded credentials detection
-   - Coverage: Passwords, AWS credentials, API keys, private keys, certificates
-   - Platform-specific patterns: AWS (AKIA), Stripe (sk_live_), Google (AIza), GitHub (ghp_)
-   - Confidence scoring and false positive indicators
-   - Compliance: PCI DSS 8.2.1, SOC 2 CC6.1, HIPAA 164.312
+    - Comprehensive secrets and hardcoded credentials detection
+    - Coverage: Passwords, AWS credentials, API keys, private keys, certificates
+    - Platform-specific patterns: AWS (AKIA), Stripe (sk_live_), Google (AIza), GitHub (ghp_)
+    - Confidence scoring and false positive indicators
+    - Compliance: PCI DSS 8.2.1, SOC 2 CC6.1, HIPAA 164.312
 
 2. **`rules/rules/codeguard-2-injection-vulnerabilities.md`**
-   - SQL injection, command injection, and XSS detection
-   - Language-specific patterns: Python, Java, JavaScript, PHP, Ruby, Go
-   - Defense-in-depth strategy
-   - Parameterization vs escaping vs encoding
-   - CWE: CWE-89 (SQL), CWE-78 (Command), CWE-79 (XSS)
-   - OWASP: A03:2021 Injection
+    - SQL injection, command injection, and XSS detection
+    - Language-specific patterns: Python, Java, JavaScript, PHP, Ruby, Go
+    - Defense-in-depth strategy
+    - Parameterization vs escaping vs encoding
+    - CWE: CWE-89 (SQL), CWE-78 (Command), CWE-79 (XSS)
+    - OWASP: A03:2021 Injection
 
 3. **`rules/rules/codeguard-2-cryptography-security.md`**
-   - Weak hash algorithms (MD5, SHA-1)
-   - Password hashing failures (fast hashes for passwords)
-   - Insecure random number generation
-   - Deprecated OpenSSL APIs
-   - Required: bcrypt, Argon2id, scrypt for passwords
-   - CWE: CWE-327 (weak crypto), CWE-916 (weak password hash), CWE-338 (weak random)
+    - Weak hash algorithms (MD5, SHA-1)
+    - Password hashing failures (fast hashes for passwords)
+    - Insecure random number generation
+    - Deprecated OpenSSL APIs
+    - Required: bcrypt, Argon2id, scrypt for passwords
+    - CWE: CWE-327 (weak crypto), CWE-916 (weak password hash), CWE-338 (weak random)
 
 ### Existing Rules Enhanced
 
-The original 22 security rules in `rules/rules/codeguard-0-*.md` and `codeguard-1-*.md` were retained and now work alongside the new Level 2 rules:
+The original 22 security rules in `rules/rules/codeguard-0-*.md` and `codeguard-1-*.md` were retained and now work
+alongside the new Level 2 rules:
 
 - Authentication & MFA
 - Authorization & Access Control
@@ -103,24 +107,24 @@ The original 22 security rules in `rules/rules/codeguard-0-*.md` and `codeguard-
 ### New Documentation
 
 1. **`rules/RULES-INDEX.md`**
-   - Complete catalog of all 25 security rules
-   - Organized by vulnerability type, technology, and compliance framework
-   - Quick reference for finding relevant rules
-   - Usage guidelines for the agent
+    - Complete catalog of all 25 security rules
+    - Organized by vulnerability type, technology, and compliance framework
+    - Quick reference for finding relevant rules
+    - Usage guidelines for the agent
 
 2. **`agent/agent-definition.md`** (Updated)
-   - Added "Security Rules Format" section
-   - Explains markdown-based rules approach
-   - Documents rule organization (Level 0, 1, 2)
-   - Lists all security domains covered
+    - Added "Security Rules Format" section
+    - Explains markdown-based rules approach
+    - Documents rule organization (Level 0, 1, 2)
+    - Lists all security domains covered
 
 3. **`INTEGRATION-SUMMARY.md`**
-   - Documents YAML rules integration (now superseded)
-   - Kept for historical reference
+    - Documents YAML rules integration (now superseded)
+    - Kept for historical reference
 
 4. **`MARKDOWN-RULES-MIGRATION.md`** (This file)
-   - Migration documentation
-   - Comparison of YAML vs markdown approaches
+    - Migration documentation
+    - Comparison of YAML vs markdown approaches
 
 ## File Structure
 
@@ -152,8 +156,8 @@ CodeGuardian/
 2. **Parse Frontmatter**: Extract language applicability and `alwaysApply` flag
 3. **Load Content**: Parse markdown content for detection patterns and guidance
 4. **Apply Rules**:
-   - `alwaysApply: true` rules → Applied to all files
-   - Language-specific rules → Applied based on file extension
+    - `alwaysApply: true` rules → Applied to all files
+    - Language-specific rules → Applied based on file extension
 5. **Context Understanding**: Claude reads rule explanations to understand what to look for
 6. **Detection**: Agent identifies patterns using natural language understanding
 7. **Reporting**: Findings include rule references and remediation from the rule
@@ -164,10 +168,10 @@ When scanning a Python file:
 
 1. Agent loads `codeguard-2-secrets-detection.md` (alwaysApply: true)
 2. Reads all patterns for:
-   - Hardcoded passwords
-   - AWS credentials (AKIA pattern)
-   - API keys (20+ characters)
-   - Private keys (-----BEGIN PRIVATE KEY-----)
+    - Hardcoded passwords
+    - AWS credentials (AKIA pattern)
+    - API keys (20+ characters)
+    - Private keys (-----BEGIN PRIVATE KEY-----)
 3. Understands context (e.g., test files vs production)
 4. Checks for false positive indicators (example, sample, dummy)
 5. Flags findings with confidence level
@@ -210,6 +214,7 @@ When scanning code with database queries:
 ## Coverage Comparison
 
 ### Before (YAML Rules)
+
 - 24 rule definitions
 - Pattern-based detection only
 - Limited language support per rule
@@ -217,6 +222,7 @@ When scanning code with database queries:
 - High false positive rate
 
 ### After (Markdown Rules)
+
 - 25 comprehensive rules (22 existing + 3 new Level 2)
 - Context-aware detection
 - Multi-language examples in each rule
@@ -225,25 +231,27 @@ When scanning code with database queries:
 
 ### Coverage Statistics
 
-| Category | YAML | Markdown | Improvement |
-|----------|------|----------|-------------|
-| Total Rules | 24 | 25 | +4% |
-| Secret Types Detected | 4 | 10+ | +150% |
-| Code Examples | 48 | 100+ | +108% |
-| Languages per Rule | 1-2 | 3-6 | +200% |
-| Remediation Detail | Basic | Comprehensive | Significant |
-| Compliance Mapping | Some | All rules | Complete |
-| False Positive Handling | Limited | Contextual | Enhanced |
+| Category                | YAML    | Markdown      | Improvement |
+|-------------------------|---------|---------------|-------------|
+| Total Rules             | 24      | 25            | +4%         |
+| Secret Types Detected   | 4       | 10+           | +150%       |
+| Code Examples           | 48      | 100+          | +108%       |
+| Languages per Rule      | 1-2     | 3-6           | +200%       |
+| Remediation Detail      | Basic   | Comprehensive | Significant |
+| Compliance Mapping      | Some    | All rules     | Complete    |
+| False Positive Handling | Limited | Contextual    | Enhanced    |
 
 ## Backward Compatibility
 
 ### YAML Rules Retained
 
 The original YAML rules are kept in:
+
 - `rules/built-in-rules.yml` (comprehensive version)
 - `rules/built-in-rules-backup.yml` (original version)
 
 These can be referenced for:
+
 - Historical comparison
 - Regex pattern reference
 - Migration validation
@@ -289,6 +297,7 @@ The agent now:
 ### Example Finding
 
 **Before (YAML-based):**
+
 ```
 [CRITICAL] Hardcoded credential detected
 File: src/config.py:15
@@ -296,6 +305,7 @@ Pattern matched: 'password = "..."'
 ```
 
 **After (Markdown-based):**
+
 ```
 [CRITICAL] Hardcoded Password in Source Code
 
@@ -350,6 +360,7 @@ References:
 ### Test Cases
 
 Recommended testing on:
+
 - `examples/sample-vulnerable-code/` directory
 - Real codebases with known vulnerabilities
 - False positive scenarios (test code, examples)
@@ -357,16 +368,19 @@ Recommended testing on:
 ## Future Enhancements
 
 ### Phase 1 (Current) ✅
+
 - Markdown-based rules for secrets, injection, cryptography
 - Rules index and documentation
 - Agent configuration updated
 
 ### Phase 2 (Recommended)
+
 - Convert remaining YAML rules to markdown format
 - Add more code examples for each language
 - Expand framework-specific guidance (Django, Flask, Express, Spring)
 
 ### Phase 3 (Advanced)
+
 - Interactive remediation suggestions
 - Auto-fix capabilities for simple issues
 - Integration with IDE plugins

@@ -1,10 +1,12 @@
 # Custom Security Rules Examples
 
-This directory contains example custom security rules to help you create organization-specific detection rules for CodeGuardian.
+This directory contains example custom security rules to help you create organization-specific detection rules for
+CodeGuardian.
 
 ## Format: Markdown (Recommended)
 
-**CodeGuardian now uses markdown-based rules** that Claude agents can understand and reason about. Markdown rules provide:
+**CodeGuardian now uses markdown-based rules** that Claude agents can understand and reason about. Markdown rules
+provide:
 
 - Natural language descriptions that are easier to maintain
 - Context-aware detection that reduces false positives
@@ -13,7 +15,8 @@ This directory contains example custom security rules to help you create organiz
 
 ## Example Rule: AWS Credentials Detection
 
-See **`custom-aws-credentials.md`** for a comprehensive example of a markdown-based custom rule. This example demonstrates:
+See **`custom-aws-credentials.md`** for a comprehensive example of a markdown-based custom rule. This example
+demonstrates:
 
 - YAML frontmatter for rule metadata (languages, severity, compliance)
 - Natural language detection patterns with code examples
@@ -61,6 +64,7 @@ State the core security principle.
 ```
 
 **SECURE - What developers must use:**
+
 ```python
 # Example of secure alternative
 ```
@@ -98,6 +102,7 @@ Detailed secure implementations with code examples.
 ## Summary
 
 Key takeaways.
+
 ```
 
 ### 3. Test Your Rule
@@ -122,16 +127,19 @@ claude code security-review --list-rules
 ### Rule Scope
 
 **`alwaysApply: true`** - Apply to all files regardless of extension
+
 - Use for: Secrets detection, hardcoded credentials, sensitive data exposure
 - Example: Detecting AWS keys works across all file types
 
 **`alwaysApply: false`** - Apply only to files matching specified languages
+
 - Use for: Language-specific vulnerabilities (SQL injection, XSS, command injection)
 - Example: Python-specific SQL injection patterns
 
 ### Language Support
 
 Specify languages in frontmatter:
+
 ```yaml
 languages:
   - python
@@ -141,6 +149,7 @@ languages:
 ```
 
 Common language identifiers:
+
 - `python`, `javascript`, `typescript`, `java`, `go`, `ruby`, `php`, `c`, `cpp`, `csharp`, `kotlin`, `swift`
 - `sql`, `html`, `css`, `yaml`, `json`, `xml`, `shell`, `powershell`
 
@@ -197,7 +206,8 @@ This directory also contains YAML-based rule examples (`*.yml` files) for histor
 - `custom-database-security.yml` - Database security patterns
 - `custom-logging-security.yml` - Logging security controls
 
-**Note**: YAML rules are no longer the recommended format. These files are kept as reference but should not be used as templates for new rules. Use the markdown format shown in `custom-aws-credentials.md` instead.
+**Note**: YAML rules are no longer the recommended format. These files are kept as reference but should not be used as
+templates for new rules. Use the markdown format shown in `custom-aws-credentials.md` instead.
 
 ## Integration with CI/CD
 
@@ -222,6 +232,7 @@ For more details on creating custom rules:
 ## Questions?
 
 If you have questions about creating custom rules:
+
 1. Review the built-in rules for patterns and structure
 2. Check the documentation in `docs/`
 3. Examine `custom-aws-credentials.md` for a complete example
