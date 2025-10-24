@@ -531,8 +531,8 @@ CodeGuardian/
 │   └── core-prompt.md         # System prompt
 ├── rules/                      # Security rules
 │   ├── rules/                 # All markdown rules
-│   │   ├── codeguard-0-*.md  # Level 0: Foundational (17 files)
-│   │   ├── codeguard-1-*.md  # Level 1: Specific (5 files)
+│   │   ├── codeguard-0-*.md  # Level 0: Foundational (18 files)
+│   │   ├── codeguard-1-*.md  # Level 1: Specific (4 files)
 │   │   └── codeguard-2-*.md  # Level 2: Comprehensive (3 files)
 │   ├── examples/              # Custom rule examples
 │   ├── RULES-INDEX.md        # Complete rules catalog

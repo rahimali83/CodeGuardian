@@ -128,20 +128,19 @@ The original 22 security rules in `rules/rules/codeguard-0-*.md` and `codeguard-
 CodeGuardian/
 ├── rules/
 │   ├── rules/                      # All security rules
-│   │   ├── codeguard-0-*.md       # Level 0: Foundational rules (17 files)
-│   │   ├── codeguard-1-*.md       # Level 1: Specific detection (5 files)
+│   │   ├── codeguard-0-*.md       # Level 0: Foundational rules (18 files)
+│   │   ├── codeguard-1-*.md       # Level 1: Specific detection (4 files)
 │   │   └── codeguard-2-*.md       # Level 2: Comprehensive detection (3 files)
-│   ├── examples/                   # Custom rule examples
+│   ├── examples/                   # Custom rule examples (markdown)
 │   ├── RULES-INDEX.md             # Complete rules catalog
-│   ├── README.md                   # Rules documentation
-│   ├── built-in-rules.yml         # Legacy YAML rules (retained for reference)
-│   └── built-in-rules-backup.yml  # Original YAML backup
+│   └── README.md                   # Rules documentation
 ├── agent/
 │   ├── agent-definition.md        # Updated with markdown rules info
 │   ├── agent-metadata.json
 │   └── core-prompt.md
+├── archive/                        # Historical files
+│   └── yaml-rules/                # Legacy YAML rules (archived)
 ├── CLAUDE.md                       # Project guidance for Claude Code
-├── INTEGRATION-SUMMARY.md          # YAML integration docs (historical)
 └── MARKDOWN-RULES-MIGRATION.md    # This file
 ```
 

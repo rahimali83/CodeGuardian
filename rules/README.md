@@ -20,7 +20,7 @@ CodeGuardian uses natural language markdown rules instead of traditional pattern
 
 Rules are organized in three levels for progressive coverage:
 
-### Level 0: Foundational Security Principles (17 rules)
+### Level 0: Foundational Security Principles (18 rules)
 
 Core security domains covering essential practices:
 
@@ -40,17 +40,17 @@ Core security domains covering essential practices:
 - `codeguard-0-iac-security.md` - Infrastructure as Code security
 - `codeguard-0-mobile-apps.md` - Mobile application security
 - `codeguard-0-privacy-data-protection.md` - GDPR, CCPA compliance
+- `codeguard-0-supply-chain-security.md` - Supply chain and dependency security
 - `codeguard-0-xml-and-serialization.md` - XXE, deserialization vulnerabilities
 
-### Level 1: Specific Vulnerability Classes (5 rules)
+### Level 1: Specific Vulnerability Classes (4 rules)
 
 Focused detection for common vulnerability types:
 
 - `codeguard-1-hardcoded-credentials.md` - Secrets in source code
 - `codeguard-1-crypto-algorithms.md` - Banned and deprecated algorithms
 - `codeguard-1-digital-certificates.md` - Certificate validation
-- `codeguard-1-safe-c-functions.md` - Memory-safe C alternatives
-- `codeguard-0-safe-c-functions.md` - Safe C function usage
+- `codeguard-1-safe-c-functions.md` - Memory-safe C function alternatives
 
 ### Level 2: Comprehensive Detection (3 rules)
 

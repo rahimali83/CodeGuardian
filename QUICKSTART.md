@@ -201,10 +201,10 @@ security-review:
 
 CodeGuardian uses **25 comprehensive security rules** organized in three levels:
 
-### Level 0 (Foundational) - 17 Rules
-Core security principles covering authentication, authorization, input validation, API security, cryptography, logging, and more.
+### Level 0 (Foundational) - 18 Rules
+Core security principles covering authentication, authorization, input validation, API security, cryptography, logging, supply chain security, and more.
 
-### Level 1 (Specific) - 5 Rules
+### Level 1 (Specific) - 4 Rules
 Focused vulnerability detection for hardcoded credentials, weak algorithms, certificates, and safe C functions.
 
 ### Level 2 (Comprehensive) - 3 Rules
