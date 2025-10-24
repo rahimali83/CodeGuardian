@@ -294,6 +294,8 @@ If you have existing YAML-based custom rules:
 
 ---
 
-**Version**: 2.0.0 (Markdown-based rules)
-**Last Updated**: 2024-10-24
+**Version**: 2.1.0 (Markdown-based rules - 25 comprehensive rules)
+**Last Updated**: 2025-10-24
+**Total Rules**: 25 (18 Level 0 + 4 Level 1 + 3 Level 2)
+**Total Lines**: 3,186+ lines of security guidance
 **Format**: Markdown with YAML frontmatter

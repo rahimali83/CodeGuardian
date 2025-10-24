@@ -347,24 +347,27 @@ Reference these rules when:
 
 ## Coverage Statistics
 
-- **Total Rule Files**: 22
-- **Languages Covered**: 15+ (Python, JavaScript, TypeScript, Java, PHP, Ruby, Go, C, Kotlin, Swift, Shell, PowerShell, SQL, HTML, YAML)
+- **Total Rule Files**: 25 (18 Level 0 + 4 Level 1 + 3 Level 2)
+- **Total Lines of Security Guidance**: 3,186+ lines
+- **Languages Covered**: 15+ (Python, JavaScript, TypeScript, Java, PHP, Ruby, Go, C, Kotlin, Swift, Shell, PowerShell, SQL, HTML, YAML, XML, Perl, Matlab)
 - **CWE Mappings**: 30+
 - **OWASP Top 10 Coverage**: Complete (all 10 categories)
-- **Compliance Frameworks**: 6 (PCI DSS, SOC 2, HIPAA, GDPR, CCPA, NIST)
+- **Compliance Frameworks**: 6 (PCI DSS, SOC 2, HIPAA, GDPR, CCPA, NIST CSF)
 - **Code Examples**: 100+ (insecure and secure variants)
+- **Security Domains**: 21+ (Authentication, Authorization, Injection, Cryptography, API Security, Cloud Security, Mobile Security, and more)
 
 ## Updating Rules
 
 To add a new rule:
-1. Create `rules/rules/codeguard-X-rule-name.md`
-2. Follow the existing format with frontmatter
-3. Include detection patterns, code examples, remediation
-4. Update this index
-5. Test on sample vulnerable code
+1. Create `rules/rules/codeguard-X-rule-name.md` where X is the level (0, 1, or 2)
+2. Add frontmatter with `description`, `languages`, and `alwaysApply` fields
+3. Include detection patterns, code examples (insecure and secure), and remediation guidance
+4. Map to relevant CWE, OWASP, and compliance frameworks
+5. Update this index with the new rule details
+6. Test on sample vulnerable code in `examples/sample-vulnerable-code/`
 
 ---
 
-**Last Updated**: 2024-10-24
-**Version**: 2.0.0
+**Last Updated**: 2025-10-24
+**Version**: 2.1.0
 **Repository**: CodeGuardian Security Code Review Agent

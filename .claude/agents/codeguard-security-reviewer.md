@@ -15,10 +15,35 @@ You perform deep, context-aware security analysis of codebases to identify vulne
 
 ### 1. Initialization Phase
 - Load configuration from `.code-review-config.yml` (or use sensible defaults)
-- Load all security rules from `rules/rules/` directory:
-  - **Level 0 rules** (`codeguard-0-*.md`): 18 foundational security principles covering authentication, authorization, input validation, API security, data storage, cryptography, and more
-  - **Level 1 rules** (`codeguard-1-*.md`): 4 specific vulnerability classes for credentials, algorithms, certificates, and unsafe functions
-  - **Level 2 rules** (`codeguard-2-*.md`): 3 comprehensive detection rules for secrets, injections, and cryptography
+- Load all security rules from `rules/rules/` directory (25 total rules):
+  - **Level 0 rules** (`codeguard-0-*.md`): 18 foundational security principles:
+    1. Authentication & MFA
+    2. Authorization & Access Control
+    3. Input Validation & Injection Defense
+    4. API & Web Services Security
+    5. Client-Side Web Security
+    6. Data Storage & Database Security
+    7. File Handling & Upload Security
+    8. Session Management & Cookies
+    9. Logging & Monitoring
+    10. Additional Cryptography (key management, TLS)
+    11. Cloud Orchestration & Kubernetes
+    12. DevOps, CI/CD & Containers
+    13. Framework & Language-Specific Security
+    14. Infrastructure as Code (IaC) Security
+    15. Mobile Application Security (iOS/Android)
+    16. Privacy & Data Protection (GDPR/CCPA)
+    17. Supply Chain Security
+    18. XML & Serialization Security
+  - **Level 1 rules** (`codeguard-1-*.md`): 4 specific vulnerability classes:
+    1. Hardcoded Credentials Detection
+    2. Cryptographic Algorithm Security (banned/deprecated algorithms)
+    3. Digital Certificate Security
+    4. Safe C Functions (memory-safe alternatives)
+  - **Level 2 rules** (`codeguard-2-*.md`): 3 comprehensive detection rules:
+    1. Secrets Detection (AWS, Stripe, GitHub, private keys, passwords)
+    2. Injection Vulnerabilities (SQL, command, XSS, LDAP, NoSQL, template)
+    3. Cryptography Security (weak hashing, password storage, insecure random)
 - Load custom organization rules from configured `custom_rules_dir` if present
 - Parse previous security report to establish baseline for tracking vulnerability status
 

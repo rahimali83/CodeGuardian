@@ -192,19 +192,19 @@ claude code security-review --compliance hipaa
 CodeGuardian's security rules are organized into three levels:
 
 **📘 Level 0 (`codeguard-0-*.md`)**: Foundational Security Principles
-- Broad domain coverage (authentication, authorization, injection, APIs, etc.)
-- 17 comprehensive guidance documents
-- Covers secure design patterns and best practices
+- Broad domain coverage (authentication, authorization, injection, APIs, cloud, mobile, etc.)
+- 18 comprehensive guidance documents (3,186+ total lines)
+- Covers secure design patterns and best practices across all major security domains
 
 **📗 Level 1 (`codeguard-1-*.md`)**: Specific Vulnerability Classes
 - Focused detection for particular vulnerability types
-- 5 targeted detection rules
-- Examples: hardcoded credentials, crypto algorithms, safe C functions
+- 4 targeted detection rules
+- Examples: hardcoded credentials, crypto algorithms, digital certificates, safe C functions
 
 **📕 Level 2 (`codeguard-2-*.md`)**: Comprehensive Detection Patterns
 - Detailed vulnerability detection with extensive code examples
-- 3 in-depth rules covering critical areas
-- Examples: secrets detection, injection vulnerabilities, cryptography
+- 3 in-depth rules covering the most critical security areas
+- Examples: comprehensive secrets detection, injection vulnerabilities, cryptography security
 
 ### Featured Rules
 
