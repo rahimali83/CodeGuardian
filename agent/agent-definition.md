@@ -29,7 +29,7 @@ The Security Code Review Agent can:
 
 - **Track Vulnerability Remediation**: Compare findings across multiple review iterations to show which vulnerabilities were fixed, partially fixed, remain open, or have regressed; provide metrics on remediation progress
 
-- **Load Custom Security Rules**: Apply organization-specific security rules defined in YAML format alongside built-in rules
+- **Load Security Rules from Markdown**: Apply comprehensive security rules defined in natural language markdown format that Claude agents can easily understand and reason about; supports both built-in and organization-specific rules
 
 - **Generate Standardized Reports**: Produce comprehensive security reports in markdown format following a consistent template for easy tracking and audit purposes
 
@@ -283,6 +283,89 @@ compliance:
 reporting:
   output_dir: "security-reports"
 ```
+
+## Security Rules Format
+
+### Markdown-Based Rules
+
+CodeGuardian uses **markdown-based security rules** rather than traditional YAML pattern matching. This design choice enables Claude agents to:
+
+- **Understand context** and reasoning behind security requirements
+- **Apply nuanced judgment** about what constitutes a vulnerability
+- **Adapt detection** to different code patterns and frameworks
+- **Provide better remediation** with natural language explanations
+
+### Rule Organization
+
+Security rules are located in `rules/rules/` and organized into three levels:
+
+**Level 0 (codeguard-0-*.md)**: Foundational security principles covering broad domains like authentication, authorization, input validation, API security, etc. These provide comprehensive security guidance.
+
+**Level 1 (codeguard-1-*.md)**: Specific detection rules for particular vulnerability classes like hardcoded credentials, cryptographic algorithms, safe C functions.
+
+**Level 2 (codeguard-2-*.md)**: Comprehensive detection patterns with detailed code examples for critical vulnerabilities like secrets detection, injection flaws, and cryptography failures.
+
+### Rule Structure
+
+Each markdown rule file includes:
+
+```markdown
+---
+description: Brief description of what this rule covers
+languages:
+  - python
+  - javascript
+  - java
+alwaysApply: true  # or false
+---
+
+# Rule Title
+
+## Detection Patterns
+
+What patterns to look for, with language-specific examples of INSECURE code.
+
+## Secure Alternatives
+
+Code examples showing the SECURE way to implement the same functionality.
+
+## Remediation Steps
+
+Step-by-step instructions for fixing the vulnerability.
+
+## Compliance Impact
+
+Which compliance frameworks this relates to (PCI DSS, SOC 2, HIPAA, etc.)
+```
+
+### Built-In Rules
+
+The agent includes 22+ comprehensive security rules covering:
+
+- **Secrets Detection**: Hardcoded passwords, AWS credentials, API keys, private keys, tokens
+- **Injection Vulnerabilities**: SQL injection, command injection, XSS, LDAP injection
+- **Cryptography**: Weak algorithms (MD5, SHA-1), password hashing, insecure random
+- **Authentication & Authorization**: MFA, OAuth/OIDC, RBAC/ABAC, IDOR prevention
+- **Data Protection**: Encryption, sensitive data in logs, cleartext transmission
+- **API Security**: Rate limiting, SSRF, schema validation, GraphQL security
+- **Session Management**: Cookie security, session fixation, theft detection
+- **File Security**: Upload validation, path traversal, storage isolation
+- **Client-Side Security**: XSS, CSRF, CSP, clickjacking, XS-Leaks
+- **Database Security**: Connection security, least privilege, encryption
+- **Logging & Monitoring**: Structured logging, sensitive data redaction
+- And 10+ more security domains
+
+See `rules/RULES-INDEX.md` for the complete catalog.
+
+### Custom Rules
+
+Organizations can add custom rules by:
+
+1. Creating markdown files in the `security-rules/` directory
+2. Following the same structure as built-in rules
+3. Setting `custom_rules_dir` in `.code-review-config.yml`
+
+Custom rules are loaded alongside built-in rules and applied during analysis.
 
 ## Invoking the Agent
 
@@ -708,42 +791,68 @@ The agent supports loading **custom security rules** to extend the built-in rule
 
 ### Custom Rules Directory
 
-Custom rules are loaded from the directory specified in configuration (default: `security-rules/`). The agent loads all `.yml` and `.yaml` files from this directory.
+Custom rules are loaded from the directory specified in configuration (default: `security-rules/`). The agent loads all `.md` markdown files from this directory.
 
 ### Custom Rule Format
 
-Custom rules follow a YAML format with these fields:
+Custom rules are written as **markdown files** with natural language descriptions that Claude can understand and reason about:
 
-```yaml
-rule_id: CUSTOM-001
-title: "Brief descriptive title"
-description: "Detailed description of what this rule checks"
-severity: HIGH  # CRITICAL, HIGH, MEDIUM, LOW, INFORMATIONAL
-category: security  # security, compliance, quality, api_security
+```markdown
+---
+description: Brief description of what this rule covers
+languages:
+  - python
+  - javascript
+alwaysApply: false  # Set to true to apply to all files
+severity: HIGH      # CRITICAL, HIGH, MEDIUM, LOW
+---
 
-detection:
-  patterns:
-    - pattern: 'regex pattern here'
-      confidence: 0.9
-      description: "What this pattern detects"
+# Custom Rule Title
 
-scope:
-  file_patterns:
-    - "**/*.py"
-  languages:
-    - python
+## Critical Principle
 
-remediation:
-  description: "How to fix this issue"
-  code_examples:
-    - language: python
-      insecure: |
-        # Insecure code example
-      secure: |
-        # Secure code example
+State the core security principle this rule enforces.
 
-references:
-  - "https://owasp.org/..."
+## Detection Patterns
+
+### Pattern Category
+
+**INSECURE - Flag as HIGH severity:**
+```python
+# Example of insecure code pattern
+api_key = "hardcoded-secret-key"
+db.query(f"SELECT * FROM users WHERE id = {user_input}")
+```
+
+**SECURE - What developers must use:**
+```python
+# Example of secure alternative
+import os
+api_key = os.getenv('API_KEY')
+db.query("SELECT * FROM users WHERE id = %s", (user_input,))
+```
+
+### When to Flag
+
+- Specific pattern to look for in code
+- Context where this is a security issue
+- Indicators for high confidence detection
+
+## Remediation
+
+1. **Step-by-step fix instructions**
+2. Explain the secure approach
+3. Provide migration guidance if needed
+
+## Compliance Impact
+
+**PCI DSS X.X.X**: Requirement description
+**OWASP**: Related vulnerability class
+**CWE-XXX**: Common Weakness Enumeration
+
+## Summary
+
+Brief recap of the rule and key takeaways.
 ```
 
 For complete documentation on creating custom rules, see `docs/custom-rules-guide.md`.
@@ -770,9 +879,10 @@ claude code security-review --list-rules
 
 **Solution**:
 1. Verify the `custom_rules_dir` path in configuration is correct
-2. Check that custom rule files have `.yml` or `.yaml` extension
-3. Validate YAML syntax using a YAML validator
-4. Run with `--verbose` to see rule loading messages
+2. Check that custom rule files have `.md` extension
+3. Validate markdown frontmatter syntax (YAML format between `---` markers)
+4. Ensure proper markdown formatting and code block syntax
+5. Run with `--verbose` to see rule loading messages
 
 ### Previous Report Not Found
 

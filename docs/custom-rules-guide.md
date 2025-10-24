@@ -1,8 +1,19 @@
 # Custom Security Rules Guide
 
+> **⚠️ IMPORTANT UPDATE (Version 2.0.0)**: CodeGuardian now uses **markdown-based security rules** instead of YAML.
+>
+> **For the current markdown rule format**, see:
+> - `rules/examples/custom-aws-credentials.md` - Complete markdown rule example
+> - `rules/examples/README.md` - Markdown rule template and guide
+> - `QUICKSTART.md` - Quick guide to creating custom rules
+>
+> **This document describes the legacy YAML format** and is kept for historical reference only. New custom rules should use the markdown format.
+
 ## Overview
 
 The Security Code Review Agent supports custom security rules that extend the built-in rule set with organization-specific requirements, industry-specific compliance checks, or rules for internal frameworks and libraries. Custom rules allow you to tailor the security analysis to your unique needs while maintaining the standardized reporting and tracking capabilities of the agent.
+
+**Note**: This guide describes the **legacy YAML-based format**. For current markdown-based rules, see the resources listed at the top of this document.
 
 ## Why Create Custom Rules?
 

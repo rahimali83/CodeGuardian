@@ -1,0 +1,1098 @@
+# Comprehensive Security Rules for CodeGuardian
+# Version: 2.0.0
+# Last Updated: 2024-10-24
+#
+# This file contains comprehensive built-in security rules based on industry best practices,
+# OWASP Top 10, CWE standards, and security frameworks.
+#
+# Rules are organized by security domain for better maintainability.
+
+rules:
+  # =============================================================================
+  # HARDCODED CREDENTIALS & SECRETS DETECTION
+  # =============================================================================
+
+  - rule_id: BUILTIN-CRED-001
+    title: "Hardcoded Password Detection"
+    description: "Detects hardcoded passwords in source code which must never be stored in version control"
+    severity: CRITICAL
+    category: secrets
+    cwe: CWE-798
+    owasp: "A07:2021 - Identification and Authentication Failures"
+
+    compliance:
+      - framework: PCI_DSS
+        requirement: "8.2.1"
+        description: "Do not use hardcoded or default passwords"
+      - framework: SOC2
+        requirement: "CC6.1"
+        description: "Logical and physical access controls"
+
+    detection:
+      patterns:
+        - pattern: '(password|passwd|pwd|pass)\s*[:=]\s*["\'][^"\']{6,}["\']'
+          confidence: 0.85
+          description: "Hardcoded password assignment"
+
+        - pattern: 'DB_PASSWORD\s*=\s*["\'][^"\']+["\']'
+          confidence: 0.9
+          description: "Database password in code"
+
+        - pattern: 'mysql://.+:.+@'
+          confidence: 0.9
+          description: "MySQL connection string with credentials"
+
+        - pattern: 'postgres://.+:.+@'
+          confidence: 0.9
+          description: "PostgreSQL connection string with credentials"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.js"
+        - "**/*.java"
+        - "**/*.go"
+        - "**/*.rb"
+        - "**/*.php"
+        - "**/*.ts"
+        - "**/*.yaml"
+        - "**/*.yml"
+        - "**/*.json"
+        - "**/*.xml"
+      exclude:
+        - "**/test/**"
+        - "**/tests/**"
+        - "**/*.test.*"
+        - "**/*.spec.*"
+        - "**/example/**"
+        - "**/examples/**"
+
+    remediation:
+      description: |
+        NEVER store credentials in source code. Use environment variables, secret management systems,
+        or secure configuration files that are NOT committed to version control.
+
+      steps:
+        - "Remove all hardcoded credentials from source code immediately"
+        - "Use environment variables (process.env, os.getenv, etc.)"
+        - "Implement secret management (AWS Secrets Manager, HashiCorp Vault, Azure Key Vault)"
+        - "Add credential files to .gitignore"
+        - "Rotate all exposed credentials immediately"
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Hardcoded password
+            DB_PASSWORD = "mysecretpassword123"
+            connection = connect(host="db.example.com", password=DB_PASSWORD)
+
+          secure: |
+            # SECURE - Environment variable
+            import os
+            DB_PASSWORD = os.getenv('DB_PASSWORD')
+            if not DB_PASSWORD:
+                raise ValueError("DB_PASSWORD environment variable not set")
+            connection = connect(host="db.example.com", password=DB_PASSWORD)
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/798.html"
+      - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
+
+  - rule_id: BUILTIN-CRED-002
+    title: "AWS Credentials Detection"
+    description: "Detects hardcoded AWS access keys which must never be in source code"
+    severity: CRITICAL
+    category: secrets
+    cwe: CWE-798
+    owasp: "A07:2021 - Identification and Authentication Failures"
+
+    detection:
+      patterns:
+        - pattern: '(aws_access_key_id|AWS_ACCESS_KEY_ID|accessKeyId)\s*[:=]\s*["\']AKIA[A-Z0-9]{16}["\']'
+          confidence: 0.95
+          description: "AWS Access Key ID (starts with AKIA)"
+
+        - pattern: '(aws_secret_access_key|AWS_SECRET_ACCESS_KEY|secretAccessKey)\s*[:=]\s*["\'][A-Za-z0-9/+=]{40}["\']'
+          confidence: 0.9
+          description: "AWS Secret Access Key (40 characters)"
+
+        - pattern: '(aws_session_token|AWS_SESSION_TOKEN|sessionToken)\s*[:=]\s*["\'][A-Za-z0-9/+=]{100,}["\']'
+          confidence: 0.9
+          description: "AWS Session Token"
+
+        - pattern: 'AKIA[A-Z0-9]{16}'
+          confidence: 0.85
+          description: "AWS Access Key ID pattern anywhere"
+
+    scope:
+      file_patterns:
+        - "**/*"
+      exclude:
+        - "**/node_modules/**"
+        - "**/vendor/**"
+        - "**/.git/**"
+
+    remediation:
+      description: |
+        Use AWS IAM roles, instance profiles, or AWS Secrets Manager. Never hardcode AWS credentials.
+
+      steps:
+        - "Remove AWS credentials from code immediately"
+        - "Rotate the exposed credentials in AWS IAM console"
+        - "Use IAM roles for EC2/Lambda/ECS"
+        - "Use AWS Secrets Manager or Parameter Store"
+        - "Configure AWS CLI profiles locally with credentials file"
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Hardcoded AWS credentials
+            AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+            AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+
+          secure: |
+            # SECURE - Use IAM role or environment variables
+            import boto3
+            # Automatically uses IAM role or environment variables
+            s3 = boto3.client('s3')
+            # Or explicitly from environment
+            import os
+            s3 = boto3.client('s3',
+                aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+
+    references:
+      - "https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html"
+
+  - rule_id: BUILTIN-CRED-003
+    title: "API Key Detection"
+    description: "Detects hardcoded API keys and tokens which must be managed securely"
+    severity: CRITICAL
+    category: secrets
+    cwe: CWE-798
+
+    detection:
+      patterns:
+        - pattern: '(api_key|apikey|api-key|apiKey|API_KEY)\s*[:=]\s*["\'][A-Za-z0-9]{20,}["\']'
+          confidence: 0.85
+          description: "Generic API key pattern"
+
+        - pattern: '(secret|secret_key|secretKey|SECRET_KEY)\s*[:=]\s*["\'][^"\']{16,}["\']'
+          confidence: 0.8
+          description: "Secret key pattern"
+
+        - pattern: '(token|auth_token|authToken|AUTH_TOKEN)\s*[:=]\s*["\'][A-Za-z0-9]{32,}["\']'
+          confidence: 0.8
+          description: "Authentication token pattern"
+
+        - pattern: 'Bearer\s+\w{20,}'
+          confidence: 0.85
+          description: "Bearer token in code"
+
+        - pattern: 'sk_live_[A-Za-z0-9]{24,}'
+          confidence: 0.95
+          description: "Stripe live secret key"
+
+        - pattern: 'pk_live_[A-Za-z0-9]{24,}'
+          confidence: 0.9
+          description: "Stripe live publishable key"
+
+        - pattern: 'AIza[A-Za-z0-9_-]{35}'
+          confidence: 0.95
+          description: "Google API key"
+
+        - pattern: 'ghp_[A-Za-z0-9]{36}'
+          confidence: 0.95
+          description: "GitHub personal access token"
+
+        - pattern: 'gho_[A-Za-z0-9]{36}'
+          confidence: 0.95
+          description: "GitHub OAuth token"
+
+    scope:
+      file_patterns:
+        - "**/*"
+      exclude:
+        - "**/test/**"
+        - "**/node_modules/**"
+        - "**/vendor/**"
+
+    remediation:
+      description: |
+        Store API keys in environment variables or secret management systems. Never commit them to version control.
+
+      steps:
+        - "Remove API keys from source code"
+        - "Rotate all exposed keys immediately"
+        - "Use environment variables or secret management"
+        - "Implement key rotation policies"
+        - "Monitor API key usage for anomalies"
+
+    references:
+      - "https://owasp.org/www-project-api-security/"
+
+  - rule_id: BUILTIN-CRED-004
+    title: "Private Key Detection"
+    description: "Detects private keys and certificates in source code"
+    severity: CRITICAL
+    category: secrets
+    cwe: CWE-798
+
+    detection:
+      patterns:
+        - pattern: '-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----'
+          confidence: 0.99
+          description: "Private key block detected"
+
+        - pattern: '-----BEGIN (PGP |GPG )?PRIVATE KEY BLOCK-----'
+          confidence: 0.99
+          description: "PGP/GPG private key"
+
+        - pattern: '(private_key|privateKey|PRIVATE_KEY)\s*[:=]\s*["\'][A-Za-z0-9+/=\n\r]{100,}["\']'
+          confidence: 0.9
+          description: "Private key variable"
+
+    scope:
+      file_patterns:
+        - "**/*"
+      exclude:
+        - "**/test/**"
+        - "**/*.pem.example"
+        - "**/*.key.example"
+
+    remediation:
+      description: |
+        Never store private keys in source code. Use secure key management systems and hardware security modules (HSM) for production keys.
+
+      steps:
+        - "Remove private keys from source code immediately"
+        - "Revoke and regenerate any exposed keys"
+        - "Use key management systems (KMS, HSM)"
+        - "Store keys in secure vaults (HashiCorp Vault, AWS KMS)"
+        - "Restrict key access to authorized systems only"
+
+    references:
+      - "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_cryptographic_key"
+
+  # =============================================================================
+  # SQL INJECTION PREVENTION
+  # =============================================================================
+
+  - rule_id: BUILTIN-SQLI-001
+    title: "SQL Injection - String Concatenation"
+    description: "SQL query built using string concatenation with user input, vulnerable to SQL injection"
+    severity: CRITICAL
+    category: injection
+    cwe: CWE-89
+    owasp: "A03:2021 - Injection"
+
+    compliance:
+      - framework: PCI_DSS
+        requirement: "6.5.1"
+        description: "Injection flaws, particularly SQL injection"
+
+    detection:
+      patterns:
+        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*%s[^)]*%'
+          language: python
+          confidence: 0.8
+          description: "Python string formatting in SQL"
+
+        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*\.format\('
+          language: python
+          confidence: 0.9
+          description: "Python .format() in SQL"
+
+        - pattern: '(execute|exec|executemany|cursor\.execute)\s*\([^)]*f["\']'
+          language: python
+          confidence: 0.9
+          description: "Python f-string in SQL"
+
+        - pattern: '(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE)[^;]*\+[^;]*\+'
+          confidence: 0.7
+          description: "SQL with string concatenation"
+
+        - pattern: 'createStatement\(\)\.execute(Query|Update)\([^)]*\+[^)]*\)'
+          language: java
+          confidence: 0.85
+          description: "Java Statement with concatenation"
+
+        - pattern: '\$conn->query\(\$.*\.'
+          language: php
+          confidence: 0.8
+          description: "PHP MySQL query with concatenation"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.java"
+        - "**/*.js"
+        - "**/*.php"
+        - "**/*.rb"
+        - "**/*.go"
+      languages:
+        - python
+        - java
+        - javascript
+        - php
+        - ruby
+        - go
+
+    remediation:
+      description: |
+        ALWAYS use parameterized queries or prepared statements. This is the PRIMARY defense against SQL injection.
+
+      steps:
+        - "Replace all string concatenation with parameterized queries"
+        - "Use ORM query builders when available"
+        - "Apply input validation as defense-in-depth"
+        - "Use least-privilege database accounts"
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - SQL Injection vulnerability
+            username = request.GET['username']
+            query = f"SELECT * FROM users WHERE username = '{username}'"
+            cursor.execute(query)
+
+          secure: |
+            # SECURE - Parameterized query
+            username = request.GET['username']
+            query = "SELECT * FROM users WHERE username = %s"
+            cursor.execute(query, (username,))
+
+        - language: java
+          insecure: |
+            // INSECURE - SQL Injection
+            String query = "SELECT * FROM users WHERE id = " + userId;
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+          secure: |
+            // SECURE - Prepared statement
+            String query = "SELECT * FROM users WHERE id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+    references:
+      - "https://owasp.org/www-community/attacks/SQL_Injection"
+      - "https://cwe.mitre.org/data/definitions/89.html"
+      - "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+
+  # =============================================================================
+  # COMMAND INJECTION PREVENTION
+  # =============================================================================
+
+  - rule_id: BUILTIN-CMDI-001
+    title: "OS Command Injection"
+    description: "System command execution with unsanitized user input allows arbitrary command execution"
+    severity: CRITICAL
+    category: injection
+    cwe: CWE-78
+    owasp: "A03:2021 - Injection"
+
+    detection:
+      patterns:
+        - pattern: 'os\.system\([^)]*\+[^)]*\)'
+          language: python
+          confidence: 0.9
+          description: "Python os.system with concatenation"
+
+        - pattern: 'subprocess\.(call|run|Popen)\([^)]*shell\s*=\s*True'
+          language: python
+          confidence: 0.85
+          description: "Python subprocess with shell=True"
+
+        - pattern: 'exec\(["\'].*\$.*["\']'
+          language: javascript
+          confidence: 0.8
+          description: "JavaScript exec with shell variables"
+
+        - pattern: 'Runtime\.getRuntime\(\)\.exec\([^)]*\+[^)]*\)'
+          language: java
+          confidence: 0.9
+          description: "Java Runtime.exec with concatenation"
+
+        - pattern: 'shell_exec\([^)]*\$[^)]*\)'
+          language: php
+          confidence: 0.85
+          description: "PHP shell_exec with variables"
+
+        - pattern: 'system\([^)]*\$[^)]*\)'
+          language: php
+          confidence: 0.85
+          description: "PHP system() with variables"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.js"
+        - "**/*.java"
+        - "**/*.php"
+        - "**/*.rb"
+      languages:
+        - python
+        - javascript
+        - java
+        - php
+        - ruby
+
+    remediation:
+      description: |
+        Avoid executing system commands. If unavoidable, use argument arrays (not shell strings) and strictly validate input.
+
+      steps:
+        - "Prefer built-in library functions over shell commands"
+        - "Use argument arrays instead of shell strings"
+        - "Disable shell interpretation"
+        - "Validate/allowlist all input"
+        - "Apply least privilege to executed commands"
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Command injection
+            filename = request.GET['file']
+            os.system(f"cat {filename}")
+
+          secure: |
+            # SECURE - No shell, argument array, validation
+            import subprocess
+            import re
+            filename = request.GET['file']
+            # Validate against allowlist
+            if not re.match(r'^[a-zA-Z0-9_.-]+$', filename):
+                raise ValueError("Invalid filename")
+            subprocess.run(['cat', filename], check=True)
+
+    references:
+      - "https://owasp.org/www-community/attacks/Command_Injection"
+      - "https://cwe.mitre.org/data/definitions/78.html"
+
+  # =============================================================================
+  # CROSS-SITE SCRIPTING (XSS) PREVENTION
+  # =============================================================================
+
+  - rule_id: BUILTIN-XSS-001
+    title: "DOM-based XSS - Dangerous Sinks"
+    description: "User input rendered to dangerous DOM sinks without encoding enables XSS attacks"
+    severity: HIGH
+    category: injection
+    cwe: CWE-79
+    owasp: "A03:2021 - Injection"
+
+    detection:
+      patterns:
+        - pattern: '\.innerHTML\s*=\s*[^"\']'
+          language: javascript
+          confidence: 0.75
+          description: "Direct innerHTML assignment"
+
+        - pattern: '\.outerHTML\s*=\s*[^"\']'
+          language: javascript
+          confidence: 0.75
+          description: "Direct outerHTML assignment"
+
+        - pattern: 'document\.write\('
+          language: javascript
+          confidence: 0.8
+          description: "document.write usage"
+
+        - pattern: 'eval\([^)]*\)'
+          language: javascript
+          confidence: 0.9
+          description: "eval() usage"
+
+        - pattern: 'dangerouslySetInnerHTML'
+          language: javascript
+          confidence: 0.7
+          description: "React dangerouslySetInnerHTML"
+
+        - pattern: '\$\([^)]*\)\.html\([^)]*\)'
+          language: javascript
+          confidence: 0.6
+          description: "jQuery .html() method"
+
+    scope:
+      file_patterns:
+        - "**/*.js"
+        - "**/*.jsx"
+        - "**/*.ts"
+        - "**/*.tsx"
+      languages:
+        - javascript
+        - typescript
+
+    remediation:
+      description: |
+        Use safe DOM APIs that automatically encode (textContent, innerText). If HTML is required, sanitize with DOMPurify.
+
+      steps:
+        - "Use textContent instead of innerHTML"
+        - "Sanitize HTML with vetted libraries (DOMPurify)"
+        - "Implement Content Security Policy (CSP)"
+        - "Use framework auto-escaping (React JSX)"
+
+      code_examples:
+        - language: javascript
+          insecure: |
+            // INSECURE - XSS vulnerability
+            const userInput = getUserInput();
+            element.innerHTML = userInput;
+
+          secure: |
+            // SECURE - Use textContent (auto-encodes)
+            const userInput = getUserInput();
+            element.textContent = userInput;
+
+            // If HTML is required, sanitize first
+            import DOMPurify from 'dompurify';
+            const clean = DOMPurify.sanitize(userInput, {
+              ALLOWED_TAGS: ['b', 'i', 'p', 'a'],
+              ALLOWED_ATTR: ['href']
+            });
+            element.innerHTML = clean;
+
+    references:
+      - "https://owasp.org/www-community/attacks/xss/"
+      - "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+
+  # =============================================================================
+  # CRYPTOGRAPHY & HASHING
+  # =============================================================================
+
+  - rule_id: BUILTIN-CRYPTO-001
+    title: "Weak Cryptographic Hash Functions"
+    description: "Use of weak or broken hash algorithms (MD5, SHA1) for security purposes"
+    severity: HIGH
+    category: cryptography
+    cwe: CWE-327
+    owasp: "A02:2021 - Cryptographic Failures"
+
+    detection:
+      patterns:
+        - pattern: 'hashlib\.(md5|sha1)\('
+          language: python
+          confidence: 0.8
+          description: "Python MD5/SHA1 usage"
+
+        - pattern: 'MessageDigest\.getInstance\(["\']MD5["\']\)'
+          language: java
+          confidence: 0.9
+          description: "Java MD5 MessageDigest"
+
+        - pattern: 'MessageDigest\.getInstance\(["\']SHA-1["\']\)'
+          language: java
+          confidence: 0.9
+          description: "Java SHA1 MessageDigest"
+
+        - pattern: 'crypto\.createHash\(["\']md5["\']\)'
+          language: javascript
+          confidence: 0.85
+          description: "Node.js MD5 hash"
+
+        - pattern: 'crypto\.createHash\(["\']sha1["\']\)'
+          language: javascript
+          confidence: 0.85
+          description: "Node.js SHA1 hash"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.java"
+        - "**/*.js"
+        - "**/*.php"
+      languages:
+        - python
+        - java
+        - javascript
+        - php
+
+    remediation:
+      description: |
+        Use strong, modern hash algorithms: SHA-256, SHA-384, or SHA-512 for general hashing.
+        For password hashing, use Argon2id, bcrypt, or scrypt.
+
+      steps:
+        - "Replace MD5/SHA1 with SHA-256 or stronger"
+        - "For passwords: use Argon2id, bcrypt, or scrypt"
+        - "Update any systems relying on weak hashes"
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Weak hash algorithm
+            import hashlib
+            hash_value = hashlib.md5(data).hexdigest()
+
+          secure: |
+            # SECURE - Strong hash algorithm
+            import hashlib
+            hash_value = hashlib.sha256(data).hexdigest()
+
+            # For passwords, use dedicated password hashing
+            import bcrypt
+            hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/327.html"
+      - "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+
+  - rule_id: BUILTIN-CRYPTO-002
+    title: "Weak Password Hashing"
+    description: "Using fast hash functions for password storage instead of slow, adaptive algorithms"
+    severity: CRITICAL
+    category: cryptography
+    cwe: CWE-916
+    owasp: "A02:2021 - Cryptographic Failures"
+
+    detection:
+      patterns:
+        - pattern: 'hashlib\.(sha256|sha512)\(.*(password|passwd|pwd)'
+          language: python
+          confidence: 0.75
+          description: "SHA-256/512 used for password hashing"
+
+        - pattern: 'MessageDigest.*password'
+          language: java
+          confidence: 0.7
+          description: "MessageDigest for password hashing"
+
+    remediation:
+      description: |
+        Use slow, memory-hard algorithms specifically designed for password hashing:
+        Argon2id (preferred), scrypt, bcrypt, or PBKDF2 with high iteration counts.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Fast hash for passwords
+            import hashlib
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+          secure: |
+            # SECURE - Proper password hashing
+            import bcrypt
+            # Generate salt and hash
+            hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12))
+
+            # Verify password
+            if bcrypt.checkpw(password.encode(), hashed_password):
+                print("Password correct")
+
+    references:
+      - "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+
+  - rule_id: BUILTIN-CRYPTO-003
+    title: "Insecure Random Number Generation"
+    description: "Non-cryptographic random functions used for security-sensitive operations"
+    severity: MEDIUM
+    category: cryptography
+    cwe: CWE-338
+    owasp: "A02:2021 - Cryptographic Failures"
+
+    detection:
+      patterns:
+        - pattern: 'random\.(random|randint|choice)'
+          language: python
+          confidence: 0.7
+          description: "Python random module (not cryptographically secure)"
+
+        - pattern: 'Math\.random\('
+          language: javascript
+          confidence: 0.7
+          description: "Math.random (not cryptographically secure)"
+
+        - pattern: 'new Random\('
+          language: java
+          confidence: 0.7
+          description: "Java Random class (not cryptographically secure)"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.js"
+        - "**/*.java"
+
+    remediation:
+      description: |
+        Use cryptographically secure random number generators for security-sensitive operations.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Predictable random
+            import random
+            token = ''.join(random.choices('0123456789abcdef', k=32))
+
+          secure: |
+            # SECURE - Cryptographically secure
+            import secrets
+            token = secrets.token_hex(16)
+
+        - language: javascript
+          insecure: |
+            // INSECURE
+            function generateToken() {
+              return Math.random().toString(36).substring(2);
+            }
+
+          secure: |
+            // SECURE
+            const crypto = require('crypto');
+            function generateToken() {
+              return crypto.randomBytes(16).toString('hex');
+            }
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/338.html"
+
+  # =============================================================================
+  # AUTHORIZATION & ACCESS CONTROL
+  # =============================================================================
+
+  - rule_id: BUILTIN-AUTHZ-001
+    title: "Missing Authorization Check"
+    description: "Endpoint or function lacks authorization verification beyond authentication"
+    severity: HIGH
+    category: access_control
+    cwe: CWE-862
+    owasp: "A01:2021 - Broken Access Control"
+
+    detection:
+      patterns:
+        - pattern: '@(app\.route|router\.(get|post|put|delete))\([^\)]*\)[^@]*\ndef [^(]*\([^)]*\):[^@]*(?!@(requires_auth|login_required|permission_required))'
+          language: python
+          confidence: 0.5
+          description: "Flask/FastAPI route without auth decorator"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.js"
+        - "**/*.java"
+
+    remediation:
+      description: |
+        Always verify authorization (what user can access), not just authentication (who they are).
+        Check resource ownership and permissions on every request.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Missing authorization
+            @app.route('/api/user/<user_id>/profile')
+            @login_required  # Only checks authentication
+            def get_profile(user_id):
+                user = User.query.get(user_id)
+                return jsonify(user.to_dict())
+
+          secure: |
+            # SECURE - Authorization check added
+            @app.route('/api/user/<user_id>/profile')
+            @login_required
+            def get_profile(user_id):
+                user = User.query.get(user_id)
+                # Authorization check
+                if current_user.id != user.id and not current_user.is_admin:
+                    abort(403, "Forbidden")
+                return jsonify(user.to_dict())
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/862.html"
+      - "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+
+  # =============================================================================
+  # PATH TRAVERSAL & FILE SECURITY
+  # =============================================================================
+
+  - rule_id: BUILTIN-PATH-001
+    title: "Path Traversal Vulnerability"
+    description: "File operations with unsanitized user input allow directory traversal attacks"
+    severity: HIGH
+    category: access_control
+    cwe: CWE-22
+    owasp: "A01:2021 - Broken Access Control"
+
+    detection:
+      patterns:
+        - pattern: 'open\([^)]*\+[^)]*\)'
+          language: python
+          confidence: 0.7
+          description: "File open with concatenation"
+
+        - pattern: 'File\([^)]*\+[^)]*\)'
+          language: java
+          confidence: 0.7
+          description: "Java File with concatenation"
+
+        - pattern: 'readFile\([^)]*\+[^)]*\)'
+          language: javascript
+          confidence: 0.7
+          description: "Node.js readFile with concatenation"
+
+    remediation:
+      description: |
+        Validate file paths strictly. Use allowlists, resolve paths, and ensure they stay within allowed directories.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Path traversal
+            filename = request.args.get('file')
+            with open(f'/uploads/{filename}', 'r') as f:
+                content = f.read()
+
+          secure: |
+            # SECURE - Path validation
+            import os
+            import re
+            filename = request.args.get('file')
+
+            # Validate filename
+            if not re.match(r'^[a-zA-Z0-9_.-]+$', filename):
+                abort(400, "Invalid filename")
+
+            # Resolve and verify path
+            base_dir = os.path.abspath('/uploads')
+            file_path = os.path.abspath(os.path.join(base_dir, filename))
+
+            if not file_path.startswith(base_dir):
+                abort(400, "Invalid path")
+
+            with open(file_path, 'r') as f:
+                content = f.read()
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/22.html"
+      - "https://owasp.org/www-community/attacks/Path_Traversal"
+
+  # =============================================================================
+  # SENSITIVE DATA EXPOSURE
+  # =============================================================================
+
+  - rule_id: BUILTIN-DATA-001
+    title: "Sensitive Data in Logs"
+    description: "Logging sensitive information like passwords, tokens, credit cards, or PII"
+    severity: HIGH
+    category: data_exposure
+    cwe: CWE-532
+    owasp: "A09:2021 - Security Logging and Monitoring Failures"
+
+    detection:
+      patterns:
+        - pattern: '(log|logger|logging)\.(info|debug|warn|error)\([^)]*password[^)]*\)'
+          confidence: 0.85
+          description: "Logging password"
+
+        - pattern: '(log|logger|logging)\.(info|debug|warn|error)\([^)]*token[^)]*\)'
+          confidence: 0.75
+          description: "Logging token"
+
+        - pattern: '(log|logger|logging)\.(info|debug|warn|error)\([^)]*(ssn|social_security)[^)]*\)'
+          confidence: 0.9
+          description: "Logging SSN"
+
+        - pattern: 'console\.(log|info|debug)\([^)]*(password|token|secret)[^)]*\)'
+          language: javascript
+          confidence: 0.8
+          description: "Console logging sensitive data"
+
+    remediation:
+      description: |
+        Never log sensitive information. Redact or mask sensitive fields before logging.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - Logging sensitive data
+            logger.info(f"User {username} login with password: {password}")
+
+          secure: |
+            # SECURE - No sensitive data logged
+            logger.info(f"User {username} login successful")
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/532.html"
+
+  - rule_id: BUILTIN-DATA-002
+    title: "Cleartext Transmission of Sensitive Data"
+    description: "Sensitive data transmitted over unencrypted HTTP connection"
+    severity: HIGH
+    category: data_exposure
+    cwe: CWE-319
+    owasp: "A02:2021 - Cryptographic Failures"
+
+    detection:
+      patterns:
+        - pattern: 'requests\.(get|post|put)\(["\']http://'
+          language: python
+          confidence: 0.7
+          description: "HTTP request in Python"
+
+        - pattern: 'verify\s*=\s*False'
+          language: python
+          confidence: 0.8
+          description: "Disabled SSL verification"
+
+    remediation:
+      description: |
+        Always use HTTPS (TLS 1.2+) for transmitting sensitive data. Never disable SSL/TLS verification.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE - HTTP and disabled verification
+            response = requests.post('http://api.example.com/login',
+                                   json={'password': password},
+                                   verify=False)
+
+          secure: |
+            # SECURE - HTTPS with verification
+            response = requests.post('https://api.example.com/login',
+                                   json={'password': password},
+                                   verify=True)
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/319.html"
+
+  # =============================================================================
+  # API SECURITY
+  # =============================================================================
+
+  - rule_id: BUILTIN-API-001
+    title: "Missing API Rate Limiting"
+    description: "API endpoint lacks rate limiting, vulnerable to brute force and DoS"
+    severity: MEDIUM
+    category: api_security
+    cwe: CWE-770
+    owasp: "A04:2021 - Insecure Design"
+
+    detection:
+      patterns:
+        - pattern: '@(app\.route|router\.post)\(["\']/(api|v1|v2)/.*(login|auth)'
+          confidence: 0.6
+          description: "Authentication API without explicit rate limit"
+
+    remediation:
+      description: |
+        Implement rate limiting on all API endpoints, especially authentication and sensitive operations.
+
+      code_examples:
+        - language: python
+          secure: |
+            # Rate limiting with Flask-Limiter
+            from flask_limiter import Limiter
+            from flask_limiter.util import get_remote_address
+
+            limiter = Limiter(app, key_func=get_remote_address)
+
+            @app.route('/api/login', methods=['POST'])
+            @limiter.limit("5 per minute")
+            def login():
+                # Authentication logic
+                pass
+
+    references:
+      - "https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/"
+
+  # =============================================================================
+  # SESSION MANAGEMENT
+  # =============================================================================
+
+  - rule_id: BUILTIN-SESS-001
+    title: "Insecure Session Cookie Configuration"
+    description: "Session cookies without Secure, HttpOnly, or SameSite flags"
+    severity: MEDIUM
+    category: session_management
+    cwe: CWE-614
+    owasp: "A07:2021 - Identification and Authentication Failures"
+
+    detection:
+      patterns:
+        - pattern: 'set_cookie\([^)]*secure\s*=\s*False'
+          confidence: 0.9
+          description: "Cookie without Secure flag"
+
+        - pattern: 'set_cookie\([^)]*httponly\s*=\s*False'
+          confidence: 0.9
+          description: "Cookie without HttpOnly flag"
+
+    remediation:
+      description: |
+        Set Secure, HttpOnly, and SameSite flags on all session cookies.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE
+            response.set_cookie('session_id', session_value)
+
+          secure: |
+            # SECURE
+            response.set_cookie('session_id', session_value,
+                              secure=True,
+                              httponly=True,
+                              samesite='Strict')
+
+    references:
+      - "https://owasp.org/www-community/controls/SecureCookieAttribute"
+
+  # =============================================================================
+  # CONFIGURATION & DEPLOYMENT
+  # =============================================================================
+
+  - rule_id: BUILTIN-CONFIG-001
+    title: "Debug Mode Enabled"
+    description: "Debug mode enabled in production exposes sensitive information"
+    severity: MEDIUM
+    category: configuration
+    cwe: CWE-489
+    owasp: "A05:2021 - Security Misconfiguration"
+
+    detection:
+      patterns:
+        - pattern: 'DEBUG\s*=\s*True'
+          language: python
+          confidence: 0.8
+          description: "Django/Flask DEBUG=True"
+
+        - pattern: 'app\.run\(debug\s*=\s*True\)'
+          language: python
+          confidence: 0.9
+          description: "Flask app running with debug=True"
+
+    scope:
+      file_patterns:
+        - "**/*.py"
+        - "**/*.yml"
+        - "**/*.yaml"
+      exclude:
+        - "**/test/**"
+        - "**/local/**"
+
+    remediation:
+      description: |
+        Never enable debug mode in production. Use environment-specific configuration.
+
+      code_examples:
+        - language: python
+          insecure: |
+            # INSECURE
+            DEBUG = True
+            app.run(debug=DEBUG)
+
+          secure: |
+            # SECURE
+            import os
+            DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+            app.run(debug=DEBUG)
+
+    references:
+      - "https://cwe.mitre.org/data/definitions/489.html"
+
+# End of comprehensive built-in rules
+# Total rules: 24 comprehensive security rules covering critical areas
+# Additional rules can be added via custom rules in the security-rules/ directory

@@ -33,53 +33,89 @@ ls -la .code-review-config.yml  # Should show the file
 
 **Causes**:
 - Wrong rules directory path
-- Invalid YAML syntax in rules
-- Rules excluded by scope patterns
+- Invalid markdown frontmatter syntax in rules
+- Missing `.md` file extension
+- Rules excluded by language scope
 
 **Solutions**:
 1. Verify `custom_rules_dir` in configuration points to correct directory
-2. Validate YAML syntax of rule files
-3. Check that rule `scope.file_patterns` match target files
-4. Run with `--verbose` to see rule loading messages
-5. Use `--list-rules` to see loaded rules
+2. Check that custom rule files have `.md` extension
+3. Validate markdown frontmatter syntax (YAML format between `---` markers)
+4. Ensure `languages` in frontmatter match target file types
+5. Run with `--verbose` to see rule loading messages
+6. Use `--list-rules` to see loaded rules
 
 **Debug**:
 ```bash
-# Validate YAML
-yamllint security-rules/*.yml
+# Check rule files exist
+ls -la security-rules/*.md
 
 # Check directory path
 cat .code-review-config.yml | grep custom_rules_dir
 
 # See loaded rules
 claude code security-review --list-rules
+
+# Run with verbose to see loading messages
+claude code security-review --verbose
 ```
 
-#### Invalid YAML Syntax
+#### Invalid Rule Frontmatter
 
 **Symptoms**:
-- Error messages about YAML parsing
-- Configuration or rules not loaded
+- Error messages about rule parsing
+- Custom rules not loaded
 
 **Solutions**:
-1. Use online YAML validator (yamllint.com)
-2. Check indentation (use spaces, not tabs)
-3. Ensure strings with special characters are quoted
-4. Validate colons have space after them
+1. Ensure frontmatter is surrounded by `---` markers
+2. Check YAML syntax within frontmatter (indentation, colons, lists)
+3. Verify required fields: `description`, `languages`, `alwaysApply`, `severity`
+4. Use proper list format for languages
 
-**Common YAML Mistakes**:
-```yaml
-# WRONG - no space after colon
-severity:HIGH
+**Common Frontmatter Mistakes**:
+```markdown
+# WRONG - no closing ---
+---
+description: My rule
+languages:
+  - python
 
-# CORRECT
+# CORRECT - proper YAML frontmatter
+---
+description: My rule
+languages:
+  - python
+alwaysApply: false
 severity: HIGH
+---
 
 # WRONG - tabs for indentation
-	pattern: "test"
+---
+description: My rule
+languages:
+	- python
+---
 
 # CORRECT - spaces for indentation
-  pattern: "test"
+---
+description: My rule
+languages:
+  - python
+---
+
+# WRONG - missing required fields
+---
+description: My rule
+---
+
+# CORRECT - all required fields
+---
+description: My rule
+languages:
+  - python
+alwaysApply: false
+severity: HIGH
+---
 ```
 
 ### Performance Issues
