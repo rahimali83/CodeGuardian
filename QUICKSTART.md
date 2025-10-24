@@ -22,7 +22,7 @@ CodeGuardian is an AI-powered security code review agent for Claude Code that:
 No configuration needed! Just run:
 
 ```bash
-claude code security-review
+claude security-review
 ```
 
 This performs a full security analysis using default settings and generates a report in `security-reports/`.
@@ -199,21 +199,43 @@ security-review:
 
 ## Understanding Security Rules
 
-CodeGuardian uses **25 comprehensive security rules** organized in three levels:
+CodeGuardian uses **25 comprehensive security rules** (3,186+ lines of security guidance) organized in three levels:
 
 ### Level 0 (Foundational) - 18 Rules
-Core security principles covering authentication, authorization, input validation, API security, cryptography, logging, supply chain security, and more.
+Core security principles covering broad security domains:
+- Authentication & MFA (passwords, OAuth/OIDC, SAML, WebAuthn, tokens)
+- Authorization & Access Control (RBAC/ABAC, IDOR prevention)
+- Input Validation & Injection Defense (SQL, LDAP, command, NoSQL, template)
+- API & Web Services Security (REST, GraphQL, SOAP, SSRF)
+- Client-Side Web Security (XSS, CSP, CSRF, clickjacking)
+- Data Storage & Database Security (TLS, credentials, RLS)
+- File Handling & Upload Security
+- Session Management & Cookies
+- Logging & Monitoring
+- Additional Cryptography (key management, TLS)
+- Cloud Orchestration & Kubernetes
+- DevOps, CI/CD & Containers
+- Framework & Language-Specific Security
+- Infrastructure as Code (Terraform, CloudFormation, Ansible)
+- Mobile Application Security (iOS/Android)
+- Privacy & Data Protection (GDPR, CCPA)
+- Supply Chain Security
+- XML & Serialization Security
 
 ### Level 1 (Specific) - 4 Rules
-Focused vulnerability detection for hardcoded credentials, weak algorithms, certificates, and safe C functions.
+Focused vulnerability detection for specific vulnerability classes:
+- Hardcoded credentials (recognition patterns, variable naming)
+- Weak cryptographic algorithms (MD5, SHA-1, DES deprecated; SHA-256+, AES-GCM required)
+- Digital certificates (validation, pinning)
+- Safe C functions (memory-safe alternatives for strcpy, sprintf, etc.)
 
 ### Level 2 (Comprehensive) - 3 Rules
-Deep detection patterns for:
-- **Secrets**: Passwords, AWS keys, API tokens, private keys
-- **Injection**: SQL, command, XSS vulnerabilities
-- **Cryptography**: Weak algorithms, password hashing, insecure random
+Deep detection patterns with extensive code examples for the most critical areas:
+- **Secrets Detection**: Passwords, AWS keys (AKIA*), Stripe keys (sk_live_*), GitHub tokens (ghp_*), API keys, private keys
+- **Injection Vulnerabilities**: SQL (language-specific patterns), command injection, XSS (DOM-based), LDAP, NoSQL, template injection
+- **Cryptography Security**: Weak hashing algorithms, password storage (bcrypt, Argon2id), insecure random number generation
 
-See `rules/RULES-INDEX.md` for complete catalog.
+See `rules/RULES-INDEX.md` for complete catalog with detailed code examples and remediation guidance.
 
 ## Common Findings and Quick Fixes
 
@@ -391,4 +413,4 @@ scope:
 
 **Ready to secure your code?** Run `claude code security-review` now!
 
-**Version**: 2.0.0 | **Last Updated**: 2024-10-24
+**Version**: 2.1.0 | **Last Updated**: 2025-10-24 | **Total Rules**: 25 (18+4+3)
